@@ -54,7 +54,6 @@ for file in files:
         data.append({
             'lap_id': lap_id, 
             'driver': lap.get('driver_name'),
-            'lap_time_str': lap.get('lap_time_str', ''), 
             'air_temp': lap.get('weather_air_temp'),
             'track_temp': lap.get('track_temp', lap.get('weather_air_temp')), 
             'track_usage': lap.get('track_usage'),
