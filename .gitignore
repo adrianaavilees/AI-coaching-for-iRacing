@@ -1,3 +1,5 @@
 data/
 add_weather_data.py
 TODO.md
+venv/
+evaluate_autoencoder.py

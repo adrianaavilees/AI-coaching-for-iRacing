@@ -14,4 +14,4 @@ streamlit>=1.30
 torch>=2.0
 jupyter>=1.0
 ipykernel>=6.25
-garage61api>=1.0
+garage61api

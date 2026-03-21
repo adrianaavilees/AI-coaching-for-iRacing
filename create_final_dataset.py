@@ -18,8 +18,8 @@ Pipeline:
 Outputs (inside data/processed/):
     - train_metadata.csv        Expert-lap metadata
     - test_metadata.csv         Amateur-lap metadata
-    - train_telemetry.npy       (n_train, 1000, 9) float32
-    - test_telemetry.npy        (n_test,  1000, 9) float32
+    - train_telemetry.npy       (n_laps_train, N_POINTS, n_features) → (18, 1000, 10)
+    - test_telemetry.npy        (n_laps_test,  N_POINTS, n_features) → (21, 1000, 10)
     - filtering_report.txt      
 """
 
@@ -41,7 +41,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 N_POINTS = 1000  # Points per lap after interpolation
 
 # Channels that go into the telemetry matrix (order matters)
-FEATURE_COLS = ["Speed", "Throttle", "Brake", "RPM", "SteeringWheelAngle","Gear", "LatAccel", "LongAccel", "YawRate"]
+FEATURE_COLS = ["Speed", "Throttle", "Brake", "RPM", "SteeringWheelAngle","Gear", "LatAccel", "LongAccel", "VertAccel","YawRate"]
 #* yaw, lat, lon are not necessary for the autoencoder to learn good representations of lap structure
 
 FILENAME_RE = re.compile(r"Garage 61 - (.+?) - Ferrari 296 GT3 - .+? - (\d{2})\.(\d{2})\.(\d{3}) - (.+?)\.csv")
