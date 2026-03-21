@@ -21,34 +21,9 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset, random_split
-
-ROOT_DIR = Path(__file__).resolve().parent
-DATA_DIR = ROOT_DIR / "data" / "processed"
-MODELS_DIR = ROOT_DIR / "models"
-MODELS_DIR.mkdir(parents=True, exist_ok=True)
+from config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, STRIDE, HIDDEN_SIZE, LATENT_DIM, N_LAYERS,TRAIN_HP
 
 TRAIN_META_PATH = DATA_DIR / "train_metadata.csv"
-FEATURE_COLS = ["Speed", "Throttle", "Brake", "RPM", "SteeringWheelAngle","Gear", "LatAccel", "LongAccel", "VertAccel","YawRate"]
-
-
-# Hyperparameters
-HP = {
-    "n_points":      200,    # Effective points per lap after stride (1000 // stride)
-    "stride":        5,      # Subsample raw 1000-point laps → 200 pts; better LSTM gradient flow
-    "hidden_size":   128,    # Increased now that the 32-dim bottleneck is properly enforced
-    "latent_dim":    32,     # True bottleneck via z (was 16 but bypassed; now enforced)
-    "n_lstm_layers": 1,      # Single layer — extra layers add capacity we can't afford
-    "dropout":       0.2,    # Light regularisation; heavier dropout collapses training
-    "noise_std":     0.01,   # Gaussian noise std for data augmentation
-    "n_augments":    9,      # Each lap → 9 noisy copies → effective dataset: 18×10=180
-    "batch_size":    6,      # Small batches suit small datasets; gradient is noisier but generalises better
-    "lr":            1e-3,   # Adam default; will be reduced by scheduler
-    "weight_decay":  1e-4,   # L2 regularisation on weights — critical with few samples
-    "epochs":        300,    
-    "patience":      50,     # Early stopping patience (epochs without val improvement)
-    "val_split":     0.15,   # ~3 laps held out for validation loss monitoring
-    "seed":          42,
-}
 
 #-------------------------------- Dataset --------------------------------#
 class LapDataset(Dataset):
@@ -64,7 +39,7 @@ class LapDataset(Dataset):
 
     def __getitem__(self, idx):
         lap_idx = idx // (1 + self.n_augments)
-        base_lap = self.data[lap_idx][::HP["stride"]]  # subsample: 1000 → n_points
+        base_lap = self.data[lap_idx][::STRIDE]  # subsample: 1000 → n_points
         
         if self.noise_std > 0 and (idx % (1 + self.n_augments)) > 0:
             noise = torch.normal(0, self.noise_std, size=base_lap.shape, device=self.device)
@@ -200,8 +175,8 @@ def train_autoencoder(model, train_loader, val_loader, hp, device):
 # --------------------------- Main --------------------------#
 def main():
     # Set random seeds for reproducibility
-    torch.manual_seed(HP["seed"])
-    np.random.seed(HP["seed"])
+    torch.manual_seed(TRAIN_HP["seed"])
+    np.random.seed(TRAIN_HP["seed"])
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -217,30 +192,30 @@ def main():
     np.savez(MODELS_DIR / "scaler_params.npz", mean=mean, std=std)
 
     # Create Dataset and DataLoader
-    full_dataset = LapDataset(train_telemetry_norm, noise_std=HP["noise_std"], n_augments=HP["n_augments"], device=device)
+    full_dataset = LapDataset(train_telemetry_norm, noise_std=TRAIN_HP["noise_std"], n_augments=TRAIN_HP["n_augments"], device=device)
     
-    val_size = int(len(full_dataset) * HP["val_split"])
+    val_size = int(len(full_dataset) * TRAIN_HP["val_split"])
     train_size = len(full_dataset) - val_size
     train_dataset, val_dataset = random_split(full_dataset, [train_size, val_size])
 
-    train_loader = DataLoader(train_dataset, batch_size=HP["batch_size"], shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=HP["batch_size"], shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=False)
 
     print(f"Training samples: {len(train_dataset)} (including augmented), Validation samples: {len(val_dataset)}")
 
     # Initialize model
-    model = LSTMAutoencoder(input_size=len(FEATURE_COLS), hidden_size=HP["hidden_size"], latent_dim=HP["latent_dim"], n_points=HP["n_points"], n_layers=HP["n_lstm_layers"], dropout=HP["dropout"]).to(device)
+    model = LSTMAutoencoder(input_size=len(FEATURE_COLS), hidden_size=HIDDEN_SIZE, latent_dim=LATENT_DIM, n_points=N_POINTS, n_layers=N_LAYERS, dropout=TRAIN_HP["dropout"]).to(device)
     print(f"Model initialized with {sum(p.numel() for p in model.parameters())} parameters")
     
     # Train model
-    train = train_autoencoder(model, train_loader, val_loader, HP, device)
+    train = train_autoencoder(model, train_loader, val_loader, TRAIN_HP, device)
     print("Training completed")
     print(f"Best validation loss: {min(train['val_loss']):.6f}")
 
     # Save training report
     with open(MODELS_DIR / "training_report.txt", "w") as f:
         json.dump({
-            "hyperparameters": HP,
+            "hyperparameters": TRAIN_HP,
             "train": train,
         }, f, indent=4)
 
