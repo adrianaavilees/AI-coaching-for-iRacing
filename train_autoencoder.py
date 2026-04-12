@@ -21,7 +21,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset, random_split
-from config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, STRIDE, HIDDEN_SIZE, LATENT_DIM, N_LAYERS,TRAIN_HP
+from config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, HIDDEN_SIZE, LATENT_DIM, N_LAYERS,TRAIN_HP
 
 TRAIN_META_PATH = DATA_DIR / "train_metadata.csv"
 
@@ -39,7 +39,7 @@ class LapDataset(Dataset):
 
     def __getitem__(self, idx):
         lap_idx = idx // (1 + self.n_augments)
-        base_lap = self.data[lap_idx][::STRIDE]  # subsample: 1000 → n_points
+        base_lap = self.data[lap_idx]#![::STRIDE]  # subsample: 1000 → n_points
         
         if self.noise_std > 0 and (idx % (1 + self.n_augments)) > 0:
             noise = torch.normal(0, self.noise_std, size=base_lap.shape, device=self.device)

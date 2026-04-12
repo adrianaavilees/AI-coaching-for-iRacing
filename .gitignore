@@ -1,6 +1,6 @@
 data/
-add_weather_data.py
-TODO.md
 venv/
 models/
+add_weather_data.py
+TODO.md
 evaluate_autoencoder.py

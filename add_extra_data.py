@@ -23,7 +23,8 @@ headers = {
     # 'Cookie': 'auth=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMUtFUTZQSlRaWFFSMlRQNjBNNlpHVDRKRSIsImV4cCI6MTk5MTU3ODEwMiwibmJmIjoxNzcwODI2MTAyLCJpYXQiOjE3NzA4MjYxMDIsInR5cCI6ImFwcCJ9.gVCD8Cz9eDI5pJWeYNKbpC3a-7c5s0ZrCMmrzjrzTM8',
 }
 
-csv_folder = r"C:\Users\AvAd738\OneDrive - HP Inc\Documents\Adriana\AI-coaching-for-iRacing\data\Ferrari 296 GT3\Imola"
+#csv_folder = r"C:\Users\AvAd738\OneDrive - HP Inc\Documents\Adriana\AI-coaching-for-iRacing\data\Ferrari 296 GT3\Imola"
+csv_folder = r"C:\Users\AvAd738\OneDrive - HP Inc\Documents\Adriana\AI-coaching-for-iRacing\data\garage61_csvs"
 folder_path = Path(csv_folder)
 
 files = list(folder_path.glob('*.csv'))

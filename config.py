@@ -21,8 +21,8 @@ EVAL_DIR.mkdir(parents=True, exist_ok=True)
 FEATURE_COLS = ["Speed", "Throttle", "Brake", "RPM", "SteeringWheelAngle","Gear", "LatAccel", "LongAccel", "VertAccel", "YawRate"]
 
 RAW_POINTS = 1000              # Points per lap after LapDistPct interpolation
-STRIDE     = 5                 # Subsample factor: every Nth point fed to the LSTM
-N_POINTS   = RAW_POINTS // STRIDE   # = 200 — effective sequence length
+#STRIDE     = 5                 # Subsample factor: every Nth point fed to the LSTM
+N_POINTS   = 1000 #RAW_POINTS // STRIDE   # = 200 — effective sequence length
 
 HIDDEN_SIZE = 128       
 LATENT_DIM  = 32        
@@ -33,7 +33,7 @@ TRAIN_HP = {
     "dropout":      0.2,    # Light regularisation; heavier dropout collapses training
     "noise_std":    0.01,   # Gaussian noise std for data augmentation
     "n_augments":   9,      # Each lap → 9 noisy copies → effective dataset: 18×10=180
-    "batch_size":   6,      # Small batches suit small datasets; gradient is noisier but generalises better
+    "batch_size":   6,      # Small batch size for better generalisation
     "lr":           1e-3,   # Adam default; will be reduced by scheduler
     "weight_decay": 1e-4,   # L2 regularisation on weights — critical with few samples
     "epochs":       300,

@@ -1,0 +1,12 @@
+[
+  {
+    "name": "auth",
+    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMUtFUTZQSlRaWFFSMlRQNjBNNlpHVDRKRSIsImV4cCI6MTk5NTU2NjI3MywibmJmIjoxNzc0ODE0MjczLCJpYXQiOjE3NzQ4MTQyNzMsInR5cCI6ImFwcCJ9.gQlwtoUpSrAq0j1iBsPDhK1wtnoB06YcvoJeUxfEAn0",
+    "domain": "garage61.net",
+    "path": "/api",
+    "expires": 1809374272.819679,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Strict"
+  }
+]
