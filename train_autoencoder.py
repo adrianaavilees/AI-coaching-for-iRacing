@@ -39,7 +39,7 @@ class LapDataset(Dataset):
 
     def __getitem__(self, idx):
         lap_idx = idx // (1 + self.n_augments)
-        base_lap = self.data[lap_idx]#![::STRIDE]  # subsample: 1000 → n_points
+        base_lap = self.data[lap_idx]
         
         if self.noise_std > 0 and (idx % (1 + self.n_augments)) > 0:
             noise = torch.normal(0, self.noise_std, size=base_lap.shape, device=self.device)
@@ -186,18 +186,29 @@ def main():
     train_telemetry = np.load(DATA_DIR / "train_telemetry.npy")  # Shape: (n_laps, n_points, n_features)
     print(f"Features ({len(FEATURE_COLS)}): {FEATURE_COLS}")
 
-    # Apply normalization
-    mean, std = compute_scaler_params(train_telemetry)
-    train_telemetry_norm = apply_normalization(train_telemetry, mean, std)
-    np.savez(MODELS_DIR / "scaler_params.npz", mean=mean, std=std)
+    # Split into training and validation sets before applying augmentation
+    indices = np.random.permutation(len(train_telemetry))
+
+    val_size = int(len(train_telemetry) * TRAIN_HP["val_split"])
+    val_idx = indices[:val_size]
+    train_idx = indices[val_size:]
+    np.savez(MODELS_DIR / "train_val_indices.npz", train_idx=train_idx, val_idx=val_idx)  # Save indices for reproducibility
+
+    train_data = train_telemetry[train_idx]
+    val_data = train_telemetry[val_idx]
+
+    # Compute scaler parameters on train data
+    mean, std = compute_scaler_params(train_data)
+    np.savez(MODELS_DIR / "scaler_params.npz", mean=mean, std=std)  # Save scaler params for inference
+
+    # Normalize data
+    train_data = apply_normalization(train_data, mean, std)
+    val_data = apply_normalization(val_data, mean, std)
 
     # Create Dataset and DataLoader
-    full_dataset = LapDataset(train_telemetry_norm, noise_std=TRAIN_HP["noise_std"], n_augments=TRAIN_HP["n_augments"], device=device)
+    train_dataset = LapDataset(train_data, noise_std=TRAIN_HP["noise_std"], n_augments=TRAIN_HP["n_augments"], device=device)
+    val_dataset = LapDataset(val_data, noise_std=0.0, n_augments=0, device=device)  # No augmentation for validation
     
-    val_size = int(len(full_dataset) * TRAIN_HP["val_split"])
-    train_size = len(full_dataset) - val_size
-    train_dataset, val_dataset = random_split(full_dataset, [train_size, val_size])
-
     train_loader = DataLoader(train_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=False)
 

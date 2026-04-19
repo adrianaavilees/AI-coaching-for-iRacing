@@ -16,3 +16,4 @@ jupyter>=1.0
 ipykernel>=6.25
 garage61api
 playwright
+scikit-learn
