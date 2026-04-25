@@ -17,3 +17,4 @@ ipykernel>=6.25
 garage61api
 playwright
 scikit-learn
+optuna

@@ -21,6 +21,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset, random_split
+from sklearn.model_selection import KFold
 from config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, HIDDEN_SIZE, LATENT_DIM, N_LAYERS,TRAIN_HP
 
 TRAIN_META_PATH = DATA_DIR / "train_metadata.csv"
@@ -68,13 +69,14 @@ class LSTMDecoder(nn.Module):
         super(LSTMDecoder, self).__init__()
         self.hidden_size = hidden_size
         self.n_points = n_points
+        self.n_layers = n_layers
         self.fc = nn.Linear(latent_dim, hidden_size)  # project z → initial hidden state
         self.lstm = nn.LSTM(hidden_size, hidden_size, n_layers, batch_first=True, dropout=dropout if n_layers > 1 else 0.0)
         self.output_layer = nn.Linear(hidden_size, output_size)
 
     def forward(self, z):
         # Project z to hidden state this is the true 32-dim bottleneck
-        h_init = self.fc(z).unsqueeze(0)              # (1, batch, hidden_size) z(32) → h_init(128)
+        h_init = self.fc(z).unsqueeze(0).repeat(self.n_layers, 1, 1)  # (n_layers, batch, hidden_size)
         c_init = torch.zeros_like(h_init)
         inp = torch.zeros(z.size(0), self.n_points, self.hidden_size, device=z.device) # (batch, seq_len, hidden_size) zero input to start decoding
         lstm_out, _ = self.lstm(inp, (h_init, c_init))
@@ -113,7 +115,7 @@ def apply_normalization(telemetry, mean, std):
 
 
 # --------------------------- Training Loop --------------------------#
-def train_autoencoder(model, train_loader, val_loader, hp, device):
+def train_autoencoder(model, train_loader, val_loader, hp, device, save_path):
     """Train the LSTM Autoencoder with early stopping and learning rate scheduling."""
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=hp["lr"], weight_decay=hp["weight_decay"])
@@ -169,10 +171,11 @@ def train_autoencoder(model, train_loader, val_loader, hp, device):
             print(f"Early stopping triggered after {epoch} epochs")
             break
     
-    return training_history
+    return training_history, best_val_loss
 
 
 # --------------------------- Main --------------------------#
+# 5 K-fold cross validation
 def main():
     # Set random seeds for reproducibility
     torch.manual_seed(TRAIN_HP["seed"])
@@ -186,61 +189,137 @@ def main():
     train_telemetry = np.load(DATA_DIR / "train_telemetry.npy")  # Shape: (n_laps, n_points, n_features)
     print(f"Features ({len(FEATURE_COLS)}): {FEATURE_COLS}")
 
-    # Split into training and validation sets before applying augmentation
-    indices = np.random.permutation(len(train_telemetry))
+    kf = KFold(n_splits=5, shuffle=True, random_state=TRAIN_HP["seed"])
 
-    val_size = int(len(train_telemetry) * TRAIN_HP["val_split"])
-    val_idx = indices[:val_size]
-    train_idx = indices[val_size:]
-    np.savez(MODELS_DIR / "train_val_indices.npz", train_idx=train_idx, val_idx=val_idx)  # Save indices for reproducibility
+    fold_results = []
+    best_global = np.inf
+    all_fold_histories = []
 
-    train_data = train_telemetry[train_idx]
-    val_data = train_telemetry[val_idx]
+    for fold, (train_idx, val_idx) in enumerate(kf.split(train_telemetry)):
+        print(f"\n--- Fold {fold + 1} ---")
 
-    # Compute scaler parameters on train data
-    mean, std = compute_scaler_params(train_data)
-    np.savez(MODELS_DIR / "scaler_params.npz", mean=mean, std=std)  # Save scaler params for inference
+        train_data = train_telemetry[train_idx]
+        val_data = train_telemetry[val_idx]
 
-    # Normalize data
-    train_data = apply_normalization(train_data, mean, std)
-    val_data = apply_normalization(val_data, mean, std)
+        # Compute fit scaler parameters on train data
+        mean, std = compute_scaler_params(train_data)
+        np.savez(MODELS_DIR / f"scaler_params_fold{fold + 1}.npz", mean=mean, std=std)  # Save scaler params for inference
 
-    # Create Dataset and DataLoader
-    train_dataset = LapDataset(train_data, noise_std=TRAIN_HP["noise_std"], n_augments=TRAIN_HP["n_augments"], device=device)
-    val_dataset = LapDataset(val_data, noise_std=0.0, n_augments=0, device=device)  # No augmentation for validation
+        # Normalize data
+        train_data = apply_normalization(train_data, mean, std)
+        val_data = apply_normalization(val_data, mean, std)
+
+        # Create Dataset and DataLoader
+        train_dataset = LapDataset(train_data, noise_std=TRAIN_HP["noise_std"], n_augments=TRAIN_HP["n_augments"], device=device)
+        val_dataset = LapDataset(val_data, noise_std=0.0, n_augments=0, device=device)  # No augmentation for validation
+
+        train_loader = DataLoader(train_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=True)
+        val_loader = DataLoader(val_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=False)
+
+        model = LSTMAutoencoder(input_size=len(FEATURE_COLS), hidden_size=HIDDEN_SIZE, latent_dim=LATENT_DIM, n_points=N_POINTS, n_layers=N_LAYERS, dropout=TRAIN_HP["dropout"]).to(device)
+        save_path = MODELS_DIR / f"autoencoder_fold{fold + 1}.pt"
+        
+        history, best_val_loss = train_autoencoder(model, train_loader, val_loader, TRAIN_HP, device, save_path)
+        all_fold_histories.append(history)
+
+        fold_results.append({
+            "fold": fold,
+            "best_val_loss": best_val_loss,
+        })
+
+        # Track global best model across folds
+        if best_val_loss < best_global:
+            best_global = best_val_loss
+            torch.save(model.state_dict(), MODELS_DIR / "autoencoder_best.pt")
+            print(f"  → New global best model saved with val loss: {best_global:.6f}")
     
-    train_loader = DataLoader(train_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=False)
+    losses = [res["best_val_loss"] for res in fold_results]
 
-    print(f"Training samples: {len(train_dataset)} (including augmented), Validation samples: {len(val_dataset)}")
+    report = {
+        "hyperparameters": TRAIN_HP,
+        "fold_results": fold_results,
+        "mean_val_loss": np.mean(losses),
+        "std_val_loss": np.std(losses),
+        "best_global_val_loss": best_global,
+    }
 
-    # Initialize model
-    model = LSTMAutoencoder(input_size=len(FEATURE_COLS), hidden_size=HIDDEN_SIZE, latent_dim=LATENT_DIM, n_points=N_POINTS, n_layers=N_LAYERS, dropout=TRAIN_HP["dropout"]).to(device)
-    print(f"Model initialized with {sum(p.numel() for p in model.parameters())} parameters")
+    with open(MODELS_DIR / "training_report.json", "w") as f:
+        json.dump(report, f, indent=4)
     
-    # Train model
-    train = train_autoencoder(model, train_loader, val_loader, TRAIN_HP, device)
-    print("Training completed")
-    print(f"Best validation loss: {min(train['val_loss']):.6f}")
+    print("\nCross-validation results:")
+    print(report)
 
-    # Save training report
-    with open(MODELS_DIR / "training_report.txt", "w") as f:
-        json.dump({
-            "hyperparameters": TRAIN_HP,
-            "train": train,
-        }, f, indent=4)
-
-    # Plot loss curves
+    # Plot 
     plt.figure(figsize=(10, 6))
-    plt.plot(train["train_loss"], label="Train Loss")
-    plt.plot(train["val_loss"], label="Val Loss")
+
+    for fold, history in enumerate(all_fold_histories):
+        #plt.plot(history["train_loss"], label=f"Fold {fold + 1} Train Loss")
+        plt.plot(history["val_loss"], label=f"Fold {fold + 1} Val Loss")
+
+    plt.title("LSTM Autoencoder Validation Loss Across Folds")
     plt.xlabel("Epoch")
     plt.ylabel("MSE Loss")
-    plt.title("LSTM Autoencoder Training Loss")
     plt.legend()
     plt.grid()
-    plt.savefig(MODELS_DIR / "loss_curve.png")  
+    plt.savefig(MODELS_DIR / "cv_loss_curve.png")
     plt.show()
+
+    #! WITHOUT CROSS VALIDATION (SINGLE SPLIT)
+    # Split into training and validation sets before applying augmentation
+    #indices = np.random.permutation(len(train_telemetry))
+
+    # val_size = int(len(train_telemetry) * TRAIN_HP["val_split"])
+    # val_idx = indices[:val_size]
+    # train_idx = indices[val_size:]
+    # np.savez(MODELS_DIR / "train_val_indices.npz", train_idx=train_idx, val_idx=val_idx)  # Save indices for reproducibility
+
+    # train_data = train_telemetry[train_idx]
+    # val_data = train_telemetry[val_idx]
+
+    # # Compute scaler parameters on train data
+    # mean, std = compute_scaler_params(train_data)
+    # np.savez(MODELS_DIR / "scaler_params.npz", mean=mean, std=std)  # Save scaler params for inference
+
+    # # Normalize data
+    # train_data = apply_normalization(train_data, mean, std)
+    # val_data = apply_normalization(val_data, mean, std)
+
+    # # Create Dataset and DataLoader
+    # train_dataset = LapDataset(train_data, noise_std=TRAIN_HP["noise_std"], n_augments=TRAIN_HP["n_augments"], device=device)
+    # val_dataset = LapDataset(val_data, noise_std=0.0, n_augments=0, device=device)  # No augmentation for validation
+    
+    # train_loader = DataLoader(train_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=True)
+    # val_loader = DataLoader(val_dataset, batch_size=TRAIN_HP["batch_size"], shuffle=False)
+
+    # print(f"Training samples: {len(train_dataset)} (including augmented), Validation samples: {len(val_dataset)}")
+
+    # # Initialize model
+    # model = LSTMAutoencoder(input_size=len(FEATURE_COLS), hidden_size=HIDDEN_SIZE, latent_dim=LATENT_DIM, n_points=N_POINTS, n_layers=N_LAYERS, dropout=TRAIN_HP["dropout"]).to(device)
+    # print(f"Model initialized with {sum(p.numel() for p in model.parameters())} parameters")
+    
+    # # Train model
+    # train = train_autoencoder(model, train_loader, val_loader, TRAIN_HP, device)
+    # print("Training completed")
+    # print(f"Best validation loss: {min(train['val_loss']):.6f}")
+
+    # # Save training report
+    # with open(MODELS_DIR / "training_report.txt", "w") as f:
+    #     json.dump({
+    #         "hyperparameters": TRAIN_HP,
+    #         "train": train,
+    #     }, f, indent=4)
+
+    # # Plot loss curves
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(train["train_loss"], label="Train Loss")
+    # plt.plot(train["val_loss"], label="Val Loss")
+    # plt.xlabel("Epoch")
+    # plt.ylabel("MSE Loss")
+    # plt.title("LSTM Autoencoder Training Loss")
+    # plt.legend()
+    # plt.grid()
+    # plt.savefig(MODELS_DIR / "loss_curve.png")  
+    # plt.show()
 
 if __name__ == "__main__":
     main()
