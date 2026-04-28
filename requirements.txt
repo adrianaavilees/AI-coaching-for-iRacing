@@ -18,3 +18,6 @@ garage61api
 playwright
 scikit-learn
 optuna
+google-genai
+groq
+openai

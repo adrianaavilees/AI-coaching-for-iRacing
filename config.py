@@ -22,20 +22,20 @@ FEATURE_COLS = ["Speed", "Throttle", "Brake", "RPM", "SteeringWheelAngle","Gear"
 
 RAW_POINTS = 1000              # Points per lap after LapDistPct interpolation
 #STRIDE     = 5                 # Subsample factor: every Nth point fed to the LSTM
-N_POINTS   = 1000 #RAW_POINTS // STRIDE   # = 200 — effective sequence length
+N_POINTS   = 1000 
 
-HIDDEN_SIZE = 128       
+HIDDEN_SIZE = 256     
 LATENT_DIM  = 32        
-N_LAYERS    = 1
+N_LAYERS    = 2
 
 # Train hyperparameters
 TRAIN_HP = {
-    "dropout":      0.2,    # Light regularisation; heavier dropout collapses training
-    "noise_std":    0.01,   # Gaussian noise std for data augmentation
-    "n_augments":   9,      # Each lap → 9 noisy copies → effective dataset: 18×10=180
-    "batch_size":   6,      # Small batch size for better generalisation
-    "lr":           1e-3,   # Adam default; will be reduced by scheduler
-    "weight_decay": 1e-4,   # L2 regularisation on weights — critical with few samples
+    "dropout":      0.3314950036607718,    # Light regularisation; heavier dropout collapses training
+    "noise_std":    0.03269124292259021,   # Gaussian noise std for data augmentation
+    "n_augments":   8,      # Each lap → 8 noisy copies → effective dataset: 18×10=180
+    "batch_size":   8,      # Small batch size for better generalisation
+    "lr":           0.00045745782054754043,   # Adam default; will be reduced by scheduler
+    "weight_decay": 3.488976654890367e-05,   # L2 regularisation on weights — critical with few samples
     "epochs":       300,
     "patience":     50,     # Early stopping patience (epochs without val improvement)
     "val_split":    0.15,   # ~3 laps held out for validation loss monitoring

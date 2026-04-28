@@ -11,6 +11,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
+from matplotlib.collections import LineCollection
 from scipy.ndimage import uniform_filter1d
 from sklearn.metrics import (
     roc_curve,
@@ -36,8 +37,12 @@ DRIVER_INPUT_IDX     = [FEATURE_COLS.index(c) for c in DRIVER_INPUT_COLS]
 VEHICLE_DYNAMIC_IDX  = [FEATURE_COLS.index(c) for c in VEHICLE_DYNAMIC_COLS]
 
 def load_model(device):
-    model = LSTMAutoencoder(N_FEATURES, HIDDEN_SIZE, LATENT_DIM, N_POINTS, N_LAYERS).to(device)
-    model.load_state_dict(torch.load(MODELS_DIR / "autoencoder_best.pt", map_location=device))
+    #! HARDCODED 
+    #! The saved checkpoint was trained with hidden_size=128, n_layers=1
+    ckpt_hidden = 128
+    ckpt_layers = 1
+    model = LSTMAutoencoder(N_FEATURES, ckpt_hidden, LATENT_DIM, N_POINTS, ckpt_layers).to(device)
+    model.load_state_dict(torch.load(MODELS_DIR / "autoencoder_best_1.pt", map_location=device))
     model.eval()
     return model
 
@@ -474,20 +479,27 @@ def plot_zone_channel_breakdown(amateur_err, zones):
 def plot_circuit_error_map(test_latlon, amateur_err):
     """
     Scatter the circuit trace coloured by mean per-point reconstruction error.
-    test_latlon : (n_laps, raw_len, 2)
-    amateur_err : (n_laps, seq_len, N_FEATURES)
     """
     latlon = align_latlon_to_seq_len(test_latlon, amateur_err.shape[1])
     mean_err = amateur_err.mean(axis=(0, 2))       # (N_POINTS,) — avg over laps & channels
-    mean_lat = latlon[:, :, 0].mean(axis=0)        # (N_POINTS,) representative track line
-    mean_lon = latlon[:, :, 1].mean(axis=0)
+
+    # Smooth the trace for better visualisation
+    mean_lat = latlon[0,:,0]
+    mean_lon = latlon[0,:,1]
+
+    mean_lat = uniform_filter1d(mean_lat, size=9)
+    mean_lon = uniform_filter1d(mean_lon, size=9)
 
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.plot(mean_lon, mean_lat, color="#CCCCCC", lw=4, zorder=1)   # grey base trace
 
-    norm = Normalize(vmin=mean_err.min(), vmax=mean_err.max())
+    # Adjust color scale to focus on the main range of errors
+    vmin = np.percentile(mean_err, 5)
+    vmax = np.percentile(mean_err, 95)
+    norm = Normalize(vmin=vmin, vmax=vmax, clip=True) # clip to handle outliers
+
     sc = ax.scatter(mean_lon, mean_lat, c=mean_err, cmap="hot_r",
-                    s=22, zorder=2, norm=norm)
+                    s=30, zorder=2, norm=norm, edgecolors="none")
     cbar = plt.colorbar(sc, ax=ax, pad=0.02)
     cbar.set_label("Mean Reconstruction Error (MSE, normalised)", fontsize=10)
 
@@ -517,8 +529,11 @@ def plot_circuit_zone_map(test_latlon, amateur_err, zones):
     zones       : list of (start_idx, end_idx, mean_error) at model sequence resolution
     """
     latlon = align_latlon_to_seq_len(test_latlon, amateur_err.shape[1])
-    mean_lat = latlon[:, :, 0].mean(axis=0)
-    mean_lon = latlon[:, :, 1].mean(axis=0)
+    mean_lat = latlon[0,:,0]
+    mean_lon = latlon[0,:,1]
+
+    mean_lat = uniform_filter1d(mean_lat, size=9)
+    mean_lon = uniform_filter1d(mean_lon, size=9)
 
     zone_colors = ["#D32F2F", "#F57C00", "#FBC02D", "#388E3C", "#1976D2"]
 
@@ -647,7 +662,7 @@ def main():
     print(f"Using device: {device}")
 
     # Load scaler
-    scaler     = np.load(MODELS_DIR / "scaler_params.npz")
+    scaler     = np.load(MODELS_DIR / "scaler_params_1.npz")
     mean, std  = scaler["mean"], scaler["std"]
 
     # Load telemetry at full model resolution.

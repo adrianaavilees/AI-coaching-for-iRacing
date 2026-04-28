@@ -27,18 +27,24 @@ from train_autoencoder import (
 )
 
 # ----------------------------- Settings -------------------------------- #
-N_TRIALS       = 80       # Number of Optuna trials
-SEARCH_FOLDS   = 3        # Folds used during search (fast)
-FINAL_FOLDS    = 5        # Folds used for final evaluation
-SEARCH_EPOCHS  = 100      # Fewer epochs during search (enough to rank HPs)
-SEARCH_PATIENCE = 20      # Faster early stopping during search
-OPTUNA_DIR     = MODELS_DIR / "optuna"
+N_TRIALS        = 50       # Smaller number for faster search
+SEARCH_FOLDS    = 2        # 2 folds for search (fast); final train uses 5-fold
+FINAL_FOLDS     = 5        # Folds used for final evaluation
+SEARCH_EPOCHS   = 60       # Enough to rank HPs; final train uses full 300
+SEARCH_PATIENCE  = 15      # Fast early stopping during search
+SEARCH_SUBSAMPLE = 4       # Subsample factor: 1000 pts → 250 pts for faster LSTM training during search
+OPTUNA_DIR      = MODELS_DIR / "optuna"
 OPTUNA_DIR.mkdir(parents=True, exist_ok=True)
 
 TRAIN_META_PATH = DATA_DIR / "train_metadata.csv"
 
-# Load data ONCE (avoid reloading every trial)
-TRAIN_TELEMETRY = np.load(DATA_DIR / "train_telemetry.npy")
+# Load data ONCE and subsample temporally for search speed
+# Full sequences (1000 pts) are extremely slow with LSTM; subsampling to 250
+# preserves the lap shape while being ~4x faster per forward pass
+_raw_telemetry = np.load(DATA_DIR / "train_telemetry.npy")
+TRAIN_TELEMETRY = _raw_telemetry[:, ::SEARCH_SUBSAMPLE, :]  # (n_laps, 250, n_features)
+SEARCH_N_POINTS = TRAIN_TELEMETRY.shape[1]
+print(f"[HP search] Subsampled {_raw_telemetry.shape[1]} → {SEARCH_N_POINTS} points per lap")
 
 
 def objective(trial):
@@ -51,9 +57,9 @@ def objective(trial):
         "hidden_size":  trial.suggest_categorical("hidden_size", [64, 128, 256]),
         "latent_dim":   trial.suggest_categorical("latent_dim", [16, 32, 64]),
         "n_layers":     trial.suggest_int("n_layers", 1, 2),
-        "batch_size":   trial.suggest_categorical("batch_size", [4, 6, 8, 12]),
+        "batch_size":   trial.suggest_categorical("batch_size", [8, 12, 16]),
         "noise_std":    trial.suggest_float("noise_std", 0.005, 0.05, log=True),
-        "n_augments":   trial.suggest_int("n_augments", 3, 15),
+        "n_augments":   trial.suggest_int("n_augments", 3, 10),
         "epochs":       SEARCH_EPOCHS,   # Reduced for search speed
         "patience":     SEARCH_PATIENCE, # Reduced for search speed
         "seed":         TRAIN_HP["seed"],
@@ -84,12 +90,12 @@ def objective(trial):
         val_loader   = DataLoader(val_dataset, batch_size=HP_SPACE["batch_size"], shuffle=False)
 
 
-        # Initialize model with trial hyperparameters
+        # Initialize model with trial hyperparameters (use subsampled seq length)
         model = LSTMAutoencoder(
             input_size=len(FEATURE_COLS),
             hidden_size=HP_SPACE["hidden_size"],
             latent_dim=HP_SPACE["latent_dim"],
-            n_points=N_POINTS,
+            n_points=SEARCH_N_POINTS,
             n_layers=HP_SPACE["n_layers"],
             dropout=HP_SPACE["dropout"]
         ).to(device)
@@ -149,7 +155,7 @@ def objective(trial):
 
 if __name__ == "__main__":
     sampler = optuna.samplers.TPESampler(seed=TRAIN_HP["seed"])
-    pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=20)
+    pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=10)
     study = optuna.create_study(direction="minimize", sampler=sampler, pruner=pruner, study_name="lstm_autoencoder_hp_optimization")
     study.optimize(objective, n_trials=N_TRIALS, show_progress_bar=True)
 
