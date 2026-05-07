@@ -26,7 +26,7 @@ from config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, HIDDEN_SIZE, LA
 
 TRAIN_META_PATH = DATA_DIR / "train_metadata.csv"
 
-#-------------------------------- Dataset --------------------------------#
+#* -------------------------------- Dataset -------------------------------- #
 class LapDataset(Dataset):
     """Custom Dataset for loading telemetry laps with optional noise augmentation."""
     def __init__(self, telemetry, noise_std=0.0, n_augments=0, device="cpu"):
@@ -50,7 +50,7 @@ class LapDataset(Dataset):
         return base_lap
     
 
-#-------------------------------- Model --------------------------------#
+#* -------------------------------- Model --------------------------------#
 class LSTMEncoder(nn.Module):
     """Encodes a telemetry sequence into a compact latent vector."""
     def __init__(self, input_size, hidden_size, latent_dim, n_layers=1, dropout=0.0):
@@ -102,7 +102,7 @@ class LSTMAutoencoder(nn.Module):
         """Decode a latent vector back to telemetry space."""
         return self.decoder(z)
     
-# --------------------------- Normalization --------------------------#
+#* --------------------------- Normalization --------------------------#
 def compute_scaler_params(telemetry):
     """Compute per-channel mean and std for normalization."""
     flat = telemetry.reshape(-1, telemetry.shape[-1])  # Flatten to (n_samples * seq_len, n_features)
@@ -114,7 +114,7 @@ def apply_normalization(telemetry, mean, std):
     return (telemetry - mean) / std
 
 
-# --------------------------- Training Loop --------------------------#
+#* --------------------------- Training Loop --------------------------#
 def train_autoencoder(model, train_loader, val_loader, hp, device, save_path):
     """Train the LSTM Autoencoder with early stopping and learning rate scheduling."""
     criterion = nn.MSELoss()
@@ -174,7 +174,8 @@ def train_autoencoder(model, train_loader, val_loader, hp, device, save_path):
     return training_history, best_val_loss
 
 
-# ========================= Cross-Validation =========================#
+#* ------------------------------- Cross-Validation ------------------------------- #
+
 def run_cross_validation(train_telemetry, device, k=5):
     """
     Run K-Fold Cross-Validation to validate hyperparameters.
@@ -245,7 +246,7 @@ def run_cross_validation(train_telemetry, device, k=5):
     return report
 
 
-# ===================== Final Model =====================#
+#* ------------------------------- Final Model ------------------------------- #
 def train_final_model(train_telemetry, device):
     """
     Train the final model on 100% of the train set.
@@ -307,7 +308,7 @@ def train_final_model(train_telemetry, device):
     return report
 
 
-# ------------------------------- Main -------------------------------#
+#* ------------------------------- Main -------------------------------#
 def main():
     torch.manual_seed(TRAIN_HP["seed"])
     np.random.seed(TRAIN_HP["seed"])

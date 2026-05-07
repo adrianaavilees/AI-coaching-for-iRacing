@@ -21,9 +21,8 @@ from typing import Optional
 import httpx
 from tqdm import tqdm
 
-# ──────────────────────────────────────────────
-# CONFIGURATION
-# ──────────────────────────────────────────────
+
+#* ------------------------------- CONFIGURATION ------------------------------- #
 
 TRACK_ID      = 53    # Imola — Autodromo Internazionale Enzo e Dino Ferrari
 CAR_ID        = 155   # Ferrari 296 GT3
@@ -38,9 +37,7 @@ TOKEN_FILE     = Path(".garage61_token")
 INDEX_FILE     = Path(".garage61_laps_index.json")
 COOKIES_FILE   = Path(".garage61_cookies.json")
 
-# ──────────────────────────────────────────────
-# LOGGING
-# ──────────────────────────────────────────────
+#* ------------------------------- LOGGING ------------------------------- #
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,9 +50,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
-# ──────────────────────────────────────────────
-# NETWORK CAPTURE
-# ──────────────────────────────────────────────
+#* ------------------------------- NETWORK CAPTURE ------------------------------- #
 
 class NetworkCapture:
     """
@@ -124,9 +119,7 @@ class NetworkCapture:
             )
 
 
-# ──────────────────────────────────────────────
-# BROWSER SESSION
-# ──────────────────────────────────────────────
+#* ------------------------------- BROWSER SESSION ------------------------------- #
 
 async def run_browser(capture: NetworkCapture, max_scrolls: int) -> Optional[str]:
     """
@@ -432,9 +425,7 @@ async def run_browser(capture: NetworkCapture, max_scrolls: int) -> Optional[str
         return {"token": capture.bearer_token, "cookies": cookies_for_httpx}
 
 
-# ──────────────────────────────────────────────
-# CSV DOWNLOAD
-# ──────────────────────────────────────────────
+#* ------------------------------- CSV DOWNLOAD ------------------------------- #
 
 # Car and track name maps (matching Garage61's display names)
 CAR_NAMES = {
@@ -622,9 +613,7 @@ def load_index() -> dict:
     return {}
 
 
-# ──────────────────────────────────────────────
-# MAIN
-# ──────────────────────────────────────────────
+#* -------------------------------- MAIN -------------------------------- #
 
 async def main():
     parser = argparse.ArgumentParser(description="Garage61 public lap downloader")

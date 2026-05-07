@@ -7,11 +7,9 @@ import json
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn as nn
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
-from matplotlib.collections import LineCollection
 from scipy.ndimage import uniform_filter1d
 from sklearn.metrics import (
     roc_curve,
@@ -22,27 +20,23 @@ from sklearn.metrics import (
     confusion_matrix
 )
 
-from train_autoencoder import LSTMAutoencoder, apply_normalization 
-from config import DATA_DIR, MODELS_DIR, EVAL_DIR, FEATURE_COLS, N_POINTS, HIDDEN_SIZE, LATENT_DIM, N_LAYERS
+from train_autoencoder import LSTMAutoencoder, apply_normalization
+from config import (
+    DATA_DIR, MODELS_DIR, EVAL_DIR, FEATURE_COLS, N_POINTS,
+    HIDDEN_SIZE, LATENT_DIM, N_LAYERS,
+    DRIVER_INPUT_COLS, VEHICLE_DYNAMIC_COLS,
+)
 
 
-DROPOUT     = 0.0  
 N_FEATURES = len(FEATURE_COLS)
-LAP_DIST = np.linspace(0, 100, N_POINTS)  # percentage of lap distance for x-axis in plots
+LAP_DIST = np.linspace(0, 100, N_POINTS)
 
-# Channel groups
-DRIVER_INPUT_COLS    = ["Throttle", "Brake", "SteeringWheelAngle", "Gear"]
-VEHICLE_DYNAMIC_COLS = ["Speed", "RPM", "LatAccel", "LongAccel", "VertAccel", "YawRate"]
 DRIVER_INPUT_IDX     = [FEATURE_COLS.index(c) for c in DRIVER_INPUT_COLS]
 VEHICLE_DYNAMIC_IDX  = [FEATURE_COLS.index(c) for c in VEHICLE_DYNAMIC_COLS]
 
 def load_model(device):
-    #! HARDCODED 
-    #! The saved checkpoint was trained with hidden_size=128, n_layers=1
-    ckpt_hidden = 128
-    ckpt_layers = 1
-    model = LSTMAutoencoder(N_FEATURES, ckpt_hidden, LATENT_DIM, N_POINTS, ckpt_layers).to(device)
-    model.load_state_dict(torch.load(MODELS_DIR / "autoencoder_best_1.pt", map_location=device))
+    model = LSTMAutoencoder(N_FEATURES, HIDDEN_SIZE, LATENT_DIM, N_POINTS, N_LAYERS).to(device)
+    model.load_state_dict(torch.load(MODELS_DIR / "autoencoder_best.pt", map_location=device))
     model.eval()
     return model
 
@@ -224,6 +218,7 @@ def classification_metrics(expert_mse, amateur_mse):
 
     return metrics, fpr, tpr
 
+#* --------------------------------- Plot functions --------------------------------- #
 # Plot ROC curve
 def plot_roc_curve(fpr, tpr, clf_metrics):
     "ROC curve + metrics table"
@@ -289,7 +284,7 @@ def align_latlon_to_seq_len(latlon_raw, target_len):
     return latlon_raw[:, idx, :]
 
 
-# Plot 1: error distribution (expert vs amateur) 
+#* --------------------------------- Plot 1: error distribution (expert vs amateur) --------------------------------- #
 def plot_error_distribution(expert_mse, amateur_mse, expert_meta, amateur_meta):
     fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -331,7 +326,7 @@ def plot_error_distribution(expert_mse, amateur_mse, expert_meta, amateur_meta):
     print("  Saved: error_distribution.png")
 
 
-# Plot 2: per-channel error profile 
+#* --------------------------------- Plot 2: per-channel error profile --------------------------------- #
 def plot_channel_profiles(expert_err, amateur_err):
     """
     expert_err  : (n_expert, N_POINTS, N_FEATURES)
@@ -375,7 +370,7 @@ def plot_channel_profiles(expert_err, amateur_err):
     print("  Saved: error_profile_channels.png")
 
 
-# Plot 3: heatmap of test-lap errors 
+#* --------------------------------- Plot 3: heatmap of test-lap errors --------------------------------- #
 def plot_heatmap(amateur_err, amateur_meta):
     """amateur_err: (n_amateur, N_POINTS, N_FEATURES) → averaged over features."""
     err_2d = amateur_err.mean(axis=2)   # (n_amateur, N_POINTS)
@@ -397,7 +392,7 @@ def plot_heatmap(amateur_err, amateur_meta):
     print("  Saved: heatmap_test.png")
 
 
-# Plot 4: coaching zones 
+#* --------------------------------- Plot 4: coaching zones --------------------------------- #
 def find_coaching_zones(error_1d, window=10, top_k=5):
     """
     error_1d : (N_POINTS,) mean error across all amateur laps and features
@@ -450,7 +445,7 @@ def plot_coaching_zones(amateur_err, top_k=5):
     return zones
 
 
-# Plot 5: per-channel contribution in coaching zones 
+#* --------------------------------- Plot 5: per-channel contribution in coaching zones --------------------------------- #
 def plot_zone_channel_breakdown(amateur_err, zones):
     """Bar chart: which channels drive the error most in each coaching zone."""
     fig, axes = plt.subplots(1, len(zones), figsize=(4 * len(zones), 5), sharey=False)
@@ -475,7 +470,7 @@ def plot_zone_channel_breakdown(amateur_err, zones):
     print("  Saved: zone_channel_breakdown.png")
  
 
-# Plot 6: circuit error map 
+#* --------------------------------- Plot 6: circuit error map --------------------------------- #
 def plot_circuit_error_map(test_latlon, amateur_err):
     """
     Scatter the circuit trace coloured by mean per-point reconstruction error.
@@ -521,7 +516,7 @@ def plot_circuit_error_map(test_latlon, amateur_err):
     print("  Saved: circuit_error_map.png")
 
 
-# Plot 7: coaching zones on the circuit
+#* --------------------------------- Plot 7: coaching zones on the circuit --------------------------------- #
 def plot_circuit_zone_map(test_latlon, amateur_err, zones):
     """
     Circuit trace with each coaching zone highlighted in a distinct colour.
@@ -568,7 +563,7 @@ def plot_circuit_zone_map(test_latlon, amateur_err, zones):
     print("  Saved: circuit_zone_map.png")
 
 
-# Plot 8: error split by channel group
+#* --------------------------------- Plot 8: error split by channel group --------------------------------- #
 def plot_error_by_group(expert_err, amateur_err):
     """
     Two-panel figure:
@@ -656,13 +651,14 @@ def save_report(expert_mse, amateur_mse, expert_meta, amateur_meta, zones):
     return report
 
 
-# Main
+#* -------------------------------- Main -------------------------------- #
+
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
     # Load scaler
-    scaler     = np.load(MODELS_DIR / "scaler_params_1.npz")
+    scaler     = np.load(MODELS_DIR / "scaler_params.npz")
     mean, std  = scaler["mean"], scaler["std"]
 
     # Load telemetry at full model resolution.

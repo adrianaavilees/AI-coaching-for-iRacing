@@ -2,8 +2,6 @@ data/
 venv/
 models/
 .env
-add_weather_data.py
 TODO.md
-interpolation.py
-evaluate_dani.py
-feedback_engine.py
+evaluate_dani_to_delete.py
+coach_pilot.py

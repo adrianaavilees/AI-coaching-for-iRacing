@@ -30,6 +30,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from scipy.interpolate import interp1d
+from config import FEATURE_COLS, LATLON_COLS, N_POINTS
 
 
 ROOT_DIR = Path(__file__).resolve().parent
@@ -41,14 +42,6 @@ OUTPUT_DIR = ROOT_DIR / "data" / "processed"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-# Interpolation 
-N_POINTS = 1000  # Points per lap after interpolation
-
-# Channels that go into the telemetry matrix (order matters)
-FEATURE_COLS = ["Speed", "Throttle", "Brake", "RPM", "SteeringWheelAngle","Gear", "LatAccel", "LongAccel", "VertAccel","YawRate"]
-#* yaw, lat, lon are not necessary for the autoencoder to learn good representations of lap structure
-LATLON_COLS = ["Lat", "Lon"]  # For future use (visualization, evaluation, etc)
-
 FILENAME_RE = re.compile(r"Garage 61 - (.+?) - Ferrari 296 GT3 - .+? - (\d{2})\.(\d{2})\.(\d{3}) - (.+?)\.csv")
 
 
@@ -57,15 +50,21 @@ AMATEUR_PERCENTILE = 75
 MAX_LAP_TIME_S = 130.0
 FUEL_LEVEL_RANGE = (10, 60)
 
+#* ------------------------------ Data loading and processing functions ------------------------------ #
 
-def load_raw_laps():
-    """Scan the raw CSV directory, parse filenames, return (lap_dfs, meta_df)
+def load_raw_laps(laps_dir=None):
+    """Scan a CSV directory, parse filenames, return (lap_dfs, meta_df)
 
     Each DataFrame in *lap_dfs* is the raw telemetry for one lap.
     *meta_df* contains one row per lap with driver / time / id metadata.
     The two lists are aligned by position (index 0 ↔ row 0 of meta_df)
+
+    Args:
+        laps_dir: Path to the directory containing Garage61 CSVs.
+                  Defaults to RAW_LAPS_DIR if not provided.
     """
-    csv_files = sorted(RAW_LAPS_DIR.glob("*.csv"))
+    target_dir = Path(laps_dir) if laps_dir else RAW_LAPS_DIR
+    csv_files = sorted(target_dir.glob("*.csv"))
     lap_dfs = []
     meta_rows = []
 
@@ -172,7 +171,8 @@ def merge_extra_data(meta_df):
     return merged
 
 
-# Filtering functions
+#* ------------------------------ Filtering functions ------------------------------ #
+
 def filter_environment(df, report):
     """Keep only laps with standard weather: dry, no rain, dry-compound tyres"""
     before_laps = len(df)
@@ -274,6 +274,7 @@ def filter_fuel_train(df, report):
 
     return df_out
 
+#* ------------------------------ Main ------------------------------ #
 def main():
     report = []
     report.append("FINAL DATASET CREATION — FILTERING REPORT")
