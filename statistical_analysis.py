@@ -5,10 +5,31 @@ This module performs in-depth statistical analysis of the reconstruction errors 
 It computes key metrics such as mean squared error (MSE), identifies dominant error channels, and detects causal chains of errors that contribute to performance degradation.
 """
 import numpy as np
+from dataclasses import dataclass
 from scipy.ndimage import uniform_filter1d
 from config import FEATURE_COLS, N_POINTS, CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS
 
-from feedback_engine import ChannelDeviation, CausalChain
+
+@dataclass
+class ChannelDeviation:
+    """Deviation for a single channel within a coaching zone."""
+    channel: str
+    signed_mean: float       # Mean signed error (recon - original) in display units
+    abs_mean: float          # Mean absolute deviation in display units
+    unit: str
+    direction: str           # "over" | "under" — relative to expert pattern
+    severity: float          # 0-1 normalised severity within this zone
+
+
+@dataclass
+class CausalChain:
+    """A detected cause → effect relationship between channels."""
+    cause_channel: str
+    cause_direction: str     # "over" | "under"
+    effect_channel: str
+    effect_direction: str
+    confidence: float        # 0-1, based on temporal correlation
+    description: str         # Human-readable causal explanation
 
 def compute_signed_error(amateur_raw, expert_recon_raw):
     """

@@ -33,6 +33,34 @@ HIDDEN_SIZE = 256
 LATENT_DIM  = 32        
 N_LAYERS    = 2
 
+# Physical units for denormalised error reporting
+CHANNEL_UNITS = {
+    "Speed":              "km/h",
+    "Throttle":           "%",
+    "Brake":              "%",
+    "RPM":                "rpm",
+    "SteeringWheelAngle": "°",
+    "Gear":               "",
+    "LatAccel":           "g",
+    "LongAccel":          "g",
+    "VertAccel":          "g",
+    "YawRate":            "°/s",
+}
+
+# Multipliers to convert raw iRacing units → display units
+CHANNEL_DISPLAY_SCALE = {
+    "Speed":              3.6,       # m/s → km/h
+    "Throttle":           100.0,     # 0-1 → %
+    "Brake":              100.0,     # 0-1 → %
+    "RPM":                1.0,       # already rpm
+    "SteeringWheelAngle": 57.2958,   # rad → degrees
+    "Gear":               1.0,       # Keep as raw for gear (since it's categorical)
+    "LatAccel":           0.10197,   # m/s² → g force
+    "LongAccel":          0.10197,   # m/s² → g force
+    "VertAccel":          0.10197,   # m/s² → g force
+    "YawRate":            57.2958,   # rad/s → °/s
+}
+
 # Train hyperparameters
 TRAIN_HP = {
     "dropout":      0.3314950036607718,    # Light regularisation; heavier dropout collapses training

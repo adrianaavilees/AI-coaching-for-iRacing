@@ -24,8 +24,10 @@ from typing import Optional
 
 import numpy as np
 from dotenv import load_dotenv
-from config import N_POINTS
-from statistical_analysis import compute_signed_error, detect_zones, analyse_zone_channels, detect_causal_chains, compute_zone_severity, estimate_time_loss
+from config import N_POINTS, CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS
+from statistical_analysis import (compute_signed_error, detect_zones, analyse_zone_channels,
+                                   detect_causal_chains, compute_zone_severity, estimate_time_loss,
+                                   ChannelDeviation, CausalChain)
 from template_feedback_fallback import render_zone_feedback, render_summary
 
 load_dotenv()
@@ -33,61 +35,10 @@ load_dotenv()
 
 #* ----------------------------- Constants ----------------------------- #
 
-# Physical units for denormalised error reporting
-CHANNEL_UNITS = {
-    "Speed":              "km/h",
-    "Throttle":           "%",
-    "Brake":              "%",
-    "RPM":                "rpm",
-    "SteeringWheelAngle": "°",
-    "Gear":               "",
-    "LatAccel":           "g",
-    "LongAccel":          "g",
-    "VertAccel":          "g",
-    "YawRate":            "°/s",
-}
-
-# Multipliers to convert raw iRacing units → display units
-# (iRacing: Speed in m/s, Throttle/Brake 0-1, SteeringWheelAngle in rad, accels in m/s²)
-CHANNEL_DISPLAY_SCALE = {
-    "Speed":              3.6,       # m/s → km/h
-    "Throttle":           100.0,     # 0-1 → %
-    "Brake":              100.0,     # 0-1 → %
-    "RPM":                1.0,       # already rpm
-    "SteeringWheelAngle": 57.2958,   # rad → degrees
-    "Gear":               1.0,       # Keep as raw for gear (since it's categorical)
-    "LatAccel":           0.10197,   # m/s² → g force (g force is more intuitive for drivers to understand lateral grip)
-    "LongAccel":          0.10197,   # m/s² → g force
-    "VertAccel":          0.10197,   # m/s² → g force
-    "YawRate":            57.2958,   # rad/s → °/s
-}
-
 LAP_DIST = np.linspace(0, 100, N_POINTS)
 
 
 # ----------------------------- Data Classes ---------------------------- #
-@dataclass
-class ChannelDeviation:
-    """Deviation for a single channel within a coaching zone."""
-    channel: str
-    signed_mean: float       # Mean signed error (recon - original) in display units
-    abs_mean: float          # Mean absolute deviation in display units
-    unit: str
-    direction: str           # "over" | "under" — relative to expert pattern
-    severity: float          # 0-1 normalised severity within this zone
-
-
-@dataclass
-class CausalChain:
-    """A detected cause → effect relationship between channels."""
-    cause_channel: str
-    cause_direction: str     # "over" | "under"
-    effect_channel: str
-    effect_direction: str
-    confidence: float        # 0-1, based on temporal correlation
-    description: str         # Human-readable causal explanation
-
-
 @dataclass
 class CoachingZone:
     """A segment of the lap with significant deviation from expert driving."""
