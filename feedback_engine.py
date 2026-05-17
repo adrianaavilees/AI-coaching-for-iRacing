@@ -302,6 +302,7 @@ def generate_feedback(amateur_raw, expert_recon_raw, expert_baseline_sq_error,
     sq_error = signed_error ** 2
 
     raw_zones = detect_zones(sq_error, window=15, top_k=top_k)
+    # detect_zones returns zones sorted by track position for consistent numbering
 
     coaching_zones = []
     total_time_loss = 0.0

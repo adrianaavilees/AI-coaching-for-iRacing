@@ -320,10 +320,10 @@ def main():
     print(f"Loaded {len(train_telemetry)} laps | Features ({len(FEATURE_COLS)}): {FEATURE_COLS}")
 
     # --- Cross-validation ---
-    #run_cross_validation(train_telemetry, device, k=5)
+    run_cross_validation(train_telemetry, device, k=5)
 
     # --- Train final model ---
-    train_final_model(train_telemetry, device)
+    #train_final_model(train_telemetry, device)
 
 
 if __name__ == "__main__":

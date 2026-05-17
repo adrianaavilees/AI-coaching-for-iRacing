@@ -75,8 +75,11 @@ def detect_zones(squared_error, window=15, top_k=5, threshold_pct=75):
     min_zone_len = max(3, int(N_POINTS * 0.005))
     zones = [(s, e, v) for s, e, v in zones if (e - s + 1) >= min_zone_len]
 
+    # Select top-k by severity, then re-sort by track position for consistent numbering
     zones.sort(key=lambda z: z[2], reverse=True)
-    return zones[:top_k]
+    zones = zones[:top_k]
+    zones.sort(key=lambda z: z[0])
+    return zones
 
 
 def analyse_zone_channels(signed_error, sq_error, idx_start, idx_end):

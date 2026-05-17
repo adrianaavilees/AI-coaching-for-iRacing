@@ -100,8 +100,8 @@ def render_summary(zones, overall_severity, total_time_loss):
     lines.append("")
 
     if zones:
-        # Find the single biggest improvement opportunity
-        worst_zone = zones[0]
+        # Find the single biggest improvement opportunity (highest severity)
+        worst_zone = max(zones, key=lambda z: z.severity_score)
         if worst_zone.dominant_channels:
             top_ch = worst_zone.dominant_channels[0]
             lines.append(f"  🎯 Priority focus: Zone {worst_zone.zone_id} "

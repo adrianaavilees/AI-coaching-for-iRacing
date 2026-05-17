@@ -415,7 +415,10 @@ def find_coaching_zones(error_1d, window=10, top_k=5):
         zones.append((start, len(in_zone) - 1, smoothed[start:].mean()))
 
     zones.sort(key=lambda z: z[2], reverse=True)
-    return zones[:top_k]
+    zones = zones[:top_k]
+    # Re-sort by track position so zone numbering is consistent
+    zones.sort(key=lambda z: z[0])
+    return zones
 
 
 def plot_coaching_zones(amateur_err, top_k=5):
