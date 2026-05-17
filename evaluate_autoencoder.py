@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
 from scipy.ndimage import uniform_filter1d
+from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics import (
     roc_curve,
     roc_auc_score,
@@ -615,6 +616,144 @@ def plot_error_by_group(expert_err, amateur_err):
     print("  Saved: error_by_group.png")
 
 
+#* --------------------------------- Plot 9: MSE vs Lap Time correlation --------------------------------- #
+def plot_mse_vs_laptime(expert_mse, amateur_mse, expert_meta, amateur_meta):
+    """
+    Scatter MSE vs lap time for all laps (train + test) and compute
+    Pearson and Spearman correlations to validate that reconstruction
+    error actually captures driving performance.
+    """
+    # Combine expert + amateur
+    all_mse = np.concatenate([expert_mse, amateur_mse])
+    all_laptimes = np.concatenate([
+        expert_meta["lap_time_s"].values,
+        amateur_meta["lap_time_s"].values,
+    ])
+    labels = (["Expert"] * len(expert_mse)) + (["Amateur"] * len(amateur_mse))
+
+    # Correlations on the combined dataset
+    r_pearson, p_pearson = pearsonr(all_laptimes, all_mse)
+    r_spearman, p_spearman = spearmanr(all_laptimes, all_mse)
+
+    # Per-group correlations
+    r_expert_p, p_expert_p = pearsonr(expert_meta["lap_time_s"].values, expert_mse)
+    r_expert_s, p_expert_s = spearmanr(expert_meta["lap_time_s"].values, expert_mse)
+    r_amateur_p, p_amateur_p = pearsonr(amateur_meta["lap_time_s"].values, amateur_mse)
+    r_amateur_s, p_amateur_s = spearmanr(amateur_meta["lap_time_s"].values, amateur_mse)
+
+    # ---- Plot ----
+    fig, (ax1, ax2) = plt.subplots(
+        1, 2, figsize=(14, 6),
+        gridspec_kw={"width_ratios": [2.2, 1]}
+    )
+
+    # Scatter
+    expert_mask = np.array([l == "Expert" for l in labels])
+    ax1.scatter(all_laptimes[expert_mask], all_mse[expert_mask],
+               color="#2196F3", alpha=0.6, s=30, label="Expert (train)", zorder=3)
+    ax1.scatter(all_laptimes[~expert_mask], all_mse[~expert_mask],
+               color="#FF5722", alpha=0.6, s=30, label="Amateur (test)", zorder=3)
+
+    # Regression line (all data)
+    z = np.polyfit(all_laptimes, all_mse, 1)
+    p_line = np.poly1d(z)
+    x_range = np.linspace(all_laptimes.min(), all_laptimes.max(), 100)
+    ax1.plot(x_range, p_line(x_range), "--", color="#7B1FA2", lw=2,
+             label=f"Linear fit (r={r_pearson:.3f})")
+
+    ax1.set_xlabel("Lap Time (s)", fontsize=11)
+    ax1.set_ylabel("Reconstruction MSE (normalised)", fontsize=11)
+    ax1.set_title("Reconstruction Error vs Lap Time", fontsize=13)
+    ax1.legend(fontsize=9)
+    ax1.grid(alpha=0.3)
+
+    # Stats table
+    ax2.axis("off")
+    table_data = [
+        ["Pearson r (all)",   f"{r_pearson:.4f}"],
+        ["Pearson p (all)",   f"{p_pearson:.2e}"],
+        ["Spearman ρ (all)",  f"{r_spearman:.4f}"],
+        ["Spearman p (all)",  f"{p_spearman:.2e}"],
+        ["", ""],
+        ["Pearson r (expert)",  f"{r_expert_p:.4f}"],
+        ["Pearson p (expert)",  f"{p_expert_p:.2e}"],
+        ["Spearman ρ (expert)", f"{r_expert_s:.4f}"],
+        ["", ""],
+        ["Pearson r (amateur)",  f"{r_amateur_p:.4f}"],
+        ["Pearson p (amateur)",  f"{p_amateur_p:.2e}"],
+        ["Spearman ρ (amateur)", f"{r_amateur_s:.4f}"],
+    ]
+
+    table = ax2.table(
+        cellText=table_data,
+        colLabels=["Metric", "Value"],
+        loc="center",
+        cellLoc="center",
+    )
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.15, 1.7)
+
+    for (row, col), cell in table.get_celld().items():
+        if row == 0:
+            cell.set_text_props(weight="bold")
+            cell.set_facecolor("#DCE6F1")
+        elif table_data[row - 1][0] == "":
+            cell.set_facecolor("white")
+            cell.set_edgecolor("white")
+        else:
+            cell.set_facecolor("#F9F9F9")
+
+    plt.tight_layout()
+    plt.savefig(EVAL_DIR / "mse_vs_laptime.png", dpi=180, bbox_inches="tight")
+    plt.close()
+    print("  Saved: mse_vs_laptime.png")
+
+    # ---- Console summary ----
+    print(f"\n-- MSE vs Lap Time Correlation ---------------------------------")
+    print(f"  ALL DATA  ({len(all_mse)} laps):")
+    print(f"    Pearson  r = {r_pearson:.4f}  (p = {p_pearson:.2e})")
+    print(f"    Spearman ρ = {r_spearman:.4f}  (p = {p_spearman:.2e})")
+    print(f"  EXPERT ({len(expert_mse)} laps):")
+    print(f"    Pearson  r = {r_expert_p:.4f}  (p = {p_expert_p:.2e})")
+    print(f"    Spearman ρ = {r_expert_s:.4f}  (p = {p_expert_s:.2e})")
+    print(f"  AMATEUR ({len(amateur_mse)} laps):")
+    print(f"    Pearson  r = {r_amateur_p:.4f}  (p = {p_amateur_p:.2e})")
+    print(f"    Spearman ρ = {r_amateur_s:.4f}  (p = {p_amateur_s:.2e})")
+
+    if r_spearman >= 0.5 and p_spearman < 0.05:
+        print(f"  Significant positive correlation — model captures performance.")
+    elif r_spearman >= 0.3 and p_spearman < 0.05:
+        print(f"  Moderate correlation — model partially captures performance.")
+    else:
+        print(f"  Weak/no correlation — model may need redesign.")
+
+    # Return for inclusion in metrics JSON 
+    return {
+        "all": {
+            "n_laps": int(len(all_mse)),
+            "pearson_r": round(float(r_pearson), 4),
+            "pearson_p": float(p_pearson),
+            "spearman_rho": round(float(r_spearman), 4),
+            "spearman_p": float(p_spearman),
+        },
+        "expert": {
+            "n_laps": int(len(expert_mse)),
+            "pearson_r": round(float(r_expert_p), 4),
+            "pearson_p": float(p_expert_p),
+            "spearman_rho": round(float(r_expert_s), 4),
+            "spearman_p": float(p_expert_s),
+        },
+        "amateur": {
+            "n_laps": int(len(amateur_mse)),
+            "pearson_r": round(float(r_amateur_p), 4),
+            "pearson_p": float(p_amateur_p),
+            "spearman_rho": round(float(r_amateur_s), 4),
+            "spearman_p": float(p_amateur_s),
+        },
+    }
+
+
 # JSON report 
 def save_report(expert_mse, amateur_mse, expert_meta, amateur_meta, zones):
     def zone_to_dict(z):
@@ -711,7 +850,12 @@ def main():
     print(f"Confusion Matrix:\n{np.array(clf_metrics['confusion_matrix'])}")
 
     
-    # Save metrics report
+    # MSE vs Lap Time correlation analysis
+    print("\nComputing MSE vs Lap Time correlation...")
+    correlation_metrics = plot_mse_vs_laptime(expert_mse, amateur_mse, train_meta, test_meta)
+    metrics["mse_laptime_correlation"] = correlation_metrics
+
+    # Save metrics report (after all metrics are computed)
     with open(EVAL_DIR / "metrics_report.json", "w") as f:
         json.dump(metrics, f, indent=4)
     print("  Saved: metrics_report.json")

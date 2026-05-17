@@ -4,7 +4,6 @@ Coaching pipeline for a specific pilot.
 Loads raw Garage61 CSVs → interpolates → normalises → reconstructs through the autoencoder → generates per-lap coaching feedback via feedback_engine.
 """
 
-import argparse
 import json
 import numpy as np
 import torch

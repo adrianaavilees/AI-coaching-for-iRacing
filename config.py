@@ -18,12 +18,12 @@ EVAL_DIR   = MODELS_DIR / "eval"
 EVAL_DIR.mkdir(parents=True, exist_ok=True)
 
 # Telemetry 
-FEATURE_COLS = ["Speed", "Throttle", "Brake", "RPM", "SteeringWheelAngle","Gear", "LatAccel", "LongAccel", "VertAccel", "YawRate"]
+FEATURE_COLS = ["Speed", "Throttle", "Brake", "RPM", "SteeringWheelAngle","Gear", "LatAccel", "LongAccel", "YawRate"]
 LATLON_COLS  = ["Lat", "Lon"]
 
 # Channel groups
 DRIVER_INPUT_COLS    = ["Throttle", "Brake", "SteeringWheelAngle", "Gear"]
-VEHICLE_DYNAMIC_COLS = ["Speed", "RPM", "LatAccel", "LongAccel", "VertAccel", "YawRate"]
+VEHICLE_DYNAMIC_COLS = ["Speed", "RPM", "LatAccel", "LongAccel", "YawRate"]
 
 RAW_POINTS = 1000              # Points per lap after LapDistPct interpolation
 #STRIDE     = 5                 # Subsample factor: every Nth point fed to the LSTM
