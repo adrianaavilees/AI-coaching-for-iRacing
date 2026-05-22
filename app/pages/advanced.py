@@ -1,0 +1,300 @@
+"""
+Page 6: Advanced Features
+
+Multi-lap comparison, sector analysis, lap consistency, and reconstruction error deep dive.
+"""
+
+import streamlit as st
+import numpy as np
+
+from app.components.ui import section_header, empty_state
+from app.components.charts import (
+    multi_lap_overlay, error_heatmap, lap_consistency_chart,
+)
+from app.theme import COLORS, CHANNEL_DISPLAY_NAMES
+
+import sys
+from pathlib import Path
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from config import FEATURE_COLS, CHANNEL_UNITS, CHANNEL_DISPLAY_SCALE, N_POINTS
+
+LAP_DIST = np.linspace(0, 100, N_POINTS)
+
+
+def render(session: dict):
+    """Render the Advanced Features page."""
+    reports = session.get("reports", {})
+    amateur_result = session.get("amateur_result", {})
+    summary = session.get("summary", {})
+    expert_mse_mean = session.get("expert_mse", 0.0)
+    expert_mse_std = session.get("expert_mse_std", 0.0)
+
+    section_header("Advanced Analysis", "⚙️")
+
+    if not amateur_result:
+        empty_state("No data loaded for advanced analysis.", "📊")
+        return
+
+    laps_data = summary.get("laps", [])
+    n_laps = len(laps_data)
+
+    # ── Tabs ─────────────────────────────────────────────────────────────────
+    tab_multi, tab_sector, tab_heatmap, tab_consistency = st.tabs([
+        "🔄 Multi-Lap Comparison",
+        "📐 Sector Analysis",
+        "🔥 Error Heatmap",
+        "📈 Consistency Deep Dive",
+    ])
+
+    # ── Multi-Lap Comparison ─────────────────────────────────────────────────
+    with tab_multi:
+        section_header("Multi-Lap Overlay", "🔄")
+
+        if n_laps < 2:
+            st.info("Need at least 2 laps for multi-lap comparison.")
+        else:
+            channel = st.selectbox(
+                "Channel to compare",
+                FEATURE_COLS,
+                format_func=lambda c: f"{CHANNEL_DISPLAY_NAMES.get(c, c)} ({CHANNEL_UNITS.get(c, '')})",
+                key="multi_lap_channel",
+            )
+
+            lap_options = list(range(1, n_laps + 1))
+            selected_laps = st.multiselect(
+                "Select laps to overlay",
+                lap_options,
+                default=lap_options[:min(3, len(lap_options))],
+                key="multi_lap_selection",
+            )
+
+            if selected_laps:
+                indices = [l - 1 for l in selected_laps]
+                laps_raw = amateur_result["denorm"][indices]
+                lap_labels = [
+                    f"Lap {l} ({laps_data[l-1].get('lap_time', '')})"
+                    for l in selected_laps
+                    if l - 1 < len(laps_data)
+                ]
+
+                # Use first lap's expert reconstruction as reference
+                expert_ref = amateur_result["recon_denorm"][0] if len(amateur_result["recon_denorm"]) > 0 else None
+
+                fig = multi_lap_overlay(laps_raw, channel, lap_labels, expert_recon=expert_ref)
+                st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+                # Per-lap MSE for this channel
+                ch_idx = FEATURE_COLS.index(channel)
+                st.markdown(f"<div style='font-size: 0.85rem; font-weight: 600; color: {COLORS['text_secondary']}; margin: 16px 0 8px;'>PER-LAP ERROR ({CHANNEL_DISPLAY_NAMES.get(channel, channel)})</div>", unsafe_allow_html=True)
+
+                for lap_num in selected_laps:
+                    idx = lap_num - 1
+                    if idx < len(amateur_result["error"]):
+                        ch_mse = float(amateur_result["error"][idx, :, ch_idx].mean())
+                        st.markdown(f"""
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 6px 12px;
+                                    background: {COLORS['bg_card']}; border-radius: 6px; margin-bottom: 4px;">
+                            <span style="font-size: 0.85rem; color: {COLORS['text_primary']}; min-width: 80px;">Lap {lap_num}</span>
+                            <span style="font-family: 'JetBrains Mono'; font-size: 0.85rem; color: {COLORS['text_secondary']};">{ch_mse:.6f}</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+    # ── Sector Analysis ──────────────────────────────────────────────────────
+    with tab_sector:
+        section_header("Sector Analysis", "📐")
+
+        selected_lap_sector = st.selectbox(
+            "Lap", range(1, n_laps + 1),
+            format_func=lambda l: f"Lap {l} — {laps_data[l-1].get('lap_time', '')}" if l <= len(laps_data) else f"Lap {l}",
+            key="sector_lap",
+        )
+
+        # Divide lap into 3 sectors (0-33%, 33-66%, 66-100%)
+        n_sectors = 3
+        lap_idx = selected_lap_sector - 1
+        if lap_idx < len(amateur_result["error"]):
+            lap_error = amateur_result["error"][lap_idx]
+            sector_size = N_POINTS // n_sectors
+
+            sector_data = []
+            for s in range(n_sectors):
+                s_start = s * sector_size
+                s_end = (s + 1) * sector_size if s < n_sectors - 1 else N_POINTS
+                sector_mse = float(lap_error[s_start:s_end].mean())
+                sector_data.append({
+                    "sector": s + 1,
+                    "start_pct": round(s_start / N_POINTS * 100, 1),
+                    "end_pct": round(s_end / N_POINTS * 100, 1),
+                    "mse": sector_mse,
+                })
+
+            # Sector cards
+            cols = st.columns(n_sectors)
+            best_sector = min(sector_data, key=lambda x: x["mse"])
+            worst_sector = max(sector_data, key=lambda x: x["mse"])
+
+            for col, sd in zip(cols, sector_data):
+                with col:
+                    if sd["sector"] == best_sector["sector"]:
+                        border_color = COLORS["good"]
+                        label = "BEST"
+                    elif sd["sector"] == worst_sector["sector"]:
+                        border_color = COLORS["bad"]
+                        label = "WORST"
+                    else:
+                        border_color = COLORS["medium"]
+                        label = ""
+
+                    label_html = f'<span style="font-size: 0.65rem; background: {border_color}20; color: {border_color}; padding: 2px 8px; border-radius: 10px; margin-left: 8px;">{label}</span>' if label else ""
+
+                    st.markdown(f"""
+                    <div class="kpi-card" style="border-top: 3px solid {border_color};">
+                        <div style="font-size: 0.7rem; color: {COLORS['text_muted']}; text-transform: uppercase;">
+                            Sector {sd['sector']} {label_html}
+                        </div>
+                        <div style="font-size: 0.75rem; color: {COLORS['text_secondary']}; margin-bottom: 8px;">
+                            {sd['start_pct']:.0f}% – {sd['end_pct']:.0f}%
+                        </div>
+                        <div class="kpi-value" style="font-size: 1.4rem;">{sd['mse']:.6f}</div>
+                        <div class="kpi-label">MSE</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            # Per-channel sector breakdown
+            st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='font-size: 0.85rem; font-weight: 600; color: {COLORS['text_secondary']};'>PER-CHANNEL SECTOR BREAKDOWN</div>", unsafe_allow_html=True)
+
+            import plotly.graph_objects as go
+            from app.theme import PLOTLY_LAYOUT
+
+            channels_to_show = ["Speed", "Throttle", "Brake", "SteeringWheelAngle"]
+            sector_labels = [f"S{sd['sector']}" for sd in sector_data]
+
+            fig = go.Figure()
+            bar_colors = [COLORS["expert"], COLORS["amateur"], COLORS["delta"]]
+
+            for ch_name in channels_to_show:
+                ch_idx = FEATURE_COLS.index(ch_name)
+                values = []
+                for sd in sector_data:
+                    s_start = int(sd["start_pct"] / 100 * N_POINTS)
+                    s_end = int(sd["end_pct"] / 100 * N_POINTS)
+                    values.append(float(lap_error[s_start:s_end, ch_idx].mean()))
+
+                fig.add_trace(go.Bar(
+                    name=CHANNEL_DISPLAY_NAMES.get(ch_name, ch_name),
+                    x=sector_labels, y=values,
+                ))
+
+            fig.update_layout(
+                **PLOTLY_LAYOUT,
+                height=300,
+                barmode="group",
+                xaxis_title="Sector",
+                yaxis_title="MSE",
+            )
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+    # ── Error Heatmap ────────────────────────────────────────────────────────
+    with tab_heatmap:
+        section_header("Error Heatmap Comparison", "🔥")
+
+        if n_laps >= 1:
+            heatmap_lap = st.selectbox(
+                "Select lap",
+                range(1, n_laps + 1),
+                format_func=lambda l: f"Lap {l} — {laps_data[l-1].get('lap_time', '')}" if l <= len(laps_data) else f"Lap {l}",
+                key="heatmap_lap",
+            )
+
+            lap_idx = heatmap_lap - 1
+            if lap_idx < len(amateur_result["error"]):
+                fig = error_heatmap(amateur_result["error"][lap_idx])
+                st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+                st.markdown(f"""
+                <div style="font-size: 0.8rem; color: {COLORS['text_muted']}; text-align: center;">
+                    Bright bands indicate sections where your driving deviates most from expert patterns.
+                    Horizontal patterns suggest global issues; vertical patterns indicate specific corners.
+                </div>
+                """, unsafe_allow_html=True)
+
+    # ── Consistency Deep Dive ────────────────────────────────────────────────
+    with tab_consistency:
+        section_header("Lap-to-Lap Consistency", "📈")
+
+        if n_laps < 2:
+            st.info("Need at least 2 laps for consistency analysis.")
+        else:
+            mse_array = np.array([l.get("mse_normalised", l.get("mse", 0)) for l in laps_data])
+            time_strs = [l.get("lap_time", "") for l in laps_data]
+
+            fig = lap_consistency_chart(mse_array, time_strs, expert_mse_mean, expert_mse_std)
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+            # Consistency stats
+            st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+
+            lap_times_s = [l.get("lap_time_s", 0) for l in laps_data]
+            time_std = np.std(lap_times_s)
+            mse_std = np.std(mse_array)
+            improvement = mse_array[0] - mse_array[-1] if len(mse_array) > 1 else 0
+
+            cols = st.columns(3)
+            with cols[0]:
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-value" style="font-size: 1.3rem;">±{time_std:.3f}s</div>
+                    <div class="kpi-label">Lap Time Std Dev</div>
+                </div>
+                """, unsafe_allow_html=True)
+            with cols[1]:
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-value" style="font-size: 1.3rem;">±{mse_std:.6f}</div>
+                    <div class="kpi-label">MSE Std Dev</div>
+                </div>
+                """, unsafe_allow_html=True)
+            with cols[2]:
+                trend_color = COLORS["good"] if improvement > 0 else COLORS["bad"]
+                trend_icon = "📉" if improvement > 0 else "📈"
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-value" style="font-size: 1.3rem; color: {trend_color};">
+                        {trend_icon} {improvement:+.6f}
+                    </div>
+                    <div class="kpi-label">MSE Trend (first → last)</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # Per-lap error evolution per channel
+            st.markdown(f"<div style='font-size: 0.85rem; font-weight: 600; color: {COLORS['text_secondary']}; margin: 24px 0 8px;'>ERROR EVOLUTION BY CHANNEL</div>", unsafe_allow_html=True)
+
+            import plotly.graph_objects as go
+            from app.theme import PLOTLY_LAYOUT
+
+            fig = go.Figure()
+            channels_to_track = ["Speed", "Throttle", "Brake", "SteeringWheelAngle"]
+
+            from app.theme import CHANNEL_COLORS
+            for ch_name in channels_to_track:
+                ch_idx = FEATURE_COLS.index(ch_name)
+                ch_errors = [float(amateur_result["error"][l, :, ch_idx].mean())
+                             for l in range(min(n_laps, len(amateur_result["error"])))]
+                fig.add_trace(go.Scatter(
+                    x=list(range(1, len(ch_errors) + 1)),
+                    y=ch_errors, mode="markers+lines",
+                    name=CHANNEL_DISPLAY_NAMES.get(ch_name, ch_name),
+                    line=dict(color=CHANNEL_COLORS.get(ch_name, {}).get("amateur", COLORS["amateur"]), width=2),
+                    marker=dict(size=8),
+                ))
+
+            fig.update_layout(
+                **PLOTLY_LAYOUT, height=300,
+                xaxis_title="Lap Number", yaxis_title="Channel MSE",
+            )
+            fig.update_xaxes(tickmode="linear", dtick=1, gridcolor=COLORS["grid"])
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})

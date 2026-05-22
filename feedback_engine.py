@@ -21,6 +21,7 @@ import json
 import os
 from dataclasses import dataclass, asdict
 from typing import Optional
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import numpy as np
 from dotenv import load_dotenv
@@ -86,7 +87,7 @@ LLM_PROVIDERS = {
     },
     "groq": {
         "env_key": "GROQ_API_KEY",
-        "default_model": "llama-3.3-70b-versatile",
+        "default_model": "llama-3.1-8b-instant",
     }
 }
 
@@ -230,20 +231,11 @@ def _llm_generate(client, provider, model, prompt, max_tokens=300):
 def generate_llm_feedback(zones, overall_severity, total_time_loss,
                            provider=DEFAULT_PROVIDER, api_key=None, model=None):
     """
-    Generate LLM coaching feedback for all zones.
+    Generate LLM coaching feedback for all zones IN PARALLEL.
     
-    The LLM receives the full statistical analysis from Layer 1 and generates
-    natural-language coaching. It never invents data — only rephrases.
-    
-    Args:
-        zones: list of CoachingZone (with dominant_channels and causal_chains populated)
-        overall_severity: 0-1 overall lap severity
-        total_time_loss: estimated seconds lost
-        provider: "gemini" (default, free), "groq" (free), or "openai" (paid)
-        api_key: API key (or set env var: GEMINI_API_KEY, GROQ_API_KEY, OPENAI_API_KEY)
-        model: override default model name
-    
-    Returns: (zone_feedbacks_dict, summary_text) or (None, None) if unavailable.
+    All zone prompts + the summary prompt are submitted concurrently via
+    a ThreadPoolExecutor, reducing total wall-clock time from N×latency
+    to ~1×latency.
     """
     client, default_model = _create_llm_client(provider, api_key)
     if client is None:
@@ -251,22 +243,37 @@ def generate_llm_feedback(zones, overall_severity, total_time_loss,
 
     use_model = model or default_model
 
-    zone_feedbacks = {}
+    # Build all prompts upfront
+    zone_prompts = {}
     for zone in zones:
-        prompt = _build_llm_prompt(zone, zone.dominant_channels, zone.causal_chains)
-        try:
-            zone_feedbacks[zone.zone_id] = _llm_generate(client, provider, use_model, prompt, max_tokens=300)
-        except Exception as e:
-            print(f"  LLM error for zone {zone.zone_id}: {e}")
-            zone_feedbacks[zone.zone_id] = None
-
-    # Summary
+        zone_prompts[zone.zone_id] = _build_llm_prompt(zone, zone.dominant_channels, zone.causal_chains)
     summary_prompt = _build_summary_prompt(zones, overall_severity, total_time_loss)
-    try:
-        summary = _llm_generate(client, provider, use_model, summary_prompt, max_tokens=250)
-    except Exception as e:
-        print(f"  LLM error for summary: {e}")
-        summary = None
+
+    zone_feedbacks = {}
+    summary = None
+
+    def _call_zone(zone_id, prompt):
+        return ("zone", zone_id, _llm_generate(client, provider, use_model, prompt, max_tokens=300))
+
+    def _call_summary(prompt):
+        return ("summary", None, _llm_generate(client, provider, use_model, prompt, max_tokens=250))
+
+    # Launch all calls in parallel (zones + summary)
+    with ThreadPoolExecutor(max_workers=len(zones) + 1) as executor:
+        futures = []
+        for zone_id, prompt in zone_prompts.items():
+            futures.append(executor.submit(_call_zone, zone_id, prompt))
+        futures.append(executor.submit(_call_summary, summary_prompt))
+
+        for future in as_completed(futures):
+            try:
+                call_type, zone_id, result = future.result()
+                if call_type == "zone":
+                    zone_feedbacks[zone_id] = result
+                else:
+                    summary = result
+            except Exception as e:
+                print(f"  LLM parallel call error: {e}")
 
     return zone_feedbacks, summary
 
