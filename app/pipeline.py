@@ -110,13 +110,15 @@ def _get_expert_baseline_stats():
 
 def _get_train_latlon():
     if "train_latlon" not in _model_cache:
-        _model_cache["train_latlon"] = np.load(DATA_DIR / "train_latlon.npy")
+        path = DATA_DIR / "train_latlon.npy"
+        _model_cache["train_latlon"] = np.load(path) if path.exists() else None
     return _model_cache["train_latlon"]
 
 
 def _get_train_meta():
     if "train_meta" not in _model_cache:
-        _model_cache["train_meta"] = pd.read_csv(DATA_DIR / "train_metadata.csv")
+        path = DATA_DIR / "train_metadata.csv"
+        _model_cache["train_meta"] = pd.read_csv(path) if path.exists() else None
     return _model_cache["train_meta"]
 
 

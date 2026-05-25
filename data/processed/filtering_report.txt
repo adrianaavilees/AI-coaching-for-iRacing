@@ -1,0 +1,29 @@
+FINAL DATASET CREATION — FILTERING REPORT
+
+Raw laps loaded: 785
+Unique drivers: 785
+Telemetry matrix: (785, 1000, 9)
+
+Extra data merged: ['driver', 'lap_time_s', 'lap_time_str', 'lap_id', 'n_samples', 'filename', 'air_temp', 'track_temp', 'track_usage', 'humidity', 'wind_vel', 'wind_dir', 'precipitation', 'cloud_cover', 'fog_level', 'fuel_level', 'fuel_used', 'tire_compound']
+
+FILTERING STEPS
+------------------------------------------------------------
+Environmental filter:  785 → 709 laps  (76 removed)  |  785 → 709 drivers  (76 removed)
+Telemetry integrity:   709 → 709 laps  (0 removed)  |  709 → 709 drivers  (0 removed)
+Outlier lap times:     709 → 709 laps  (0 removed)  |  709 → 709 drivers  (0 removed)
+Skill split (p25/p75):  709 laps (709 drivers) → Expert 178 laps (178 drivers)  |  Average 353 laps (353 drivers)  |  Amateur 178 laps (178 drivers)
+Fuel filter (train):   178 → 149 laps  (29 removed)  |  178 → 149 drivers  (29 removed)
+------------------------------------------------------------
+
+============================================================
+FINAL RESULT
+  Train (expert) laps:  149  (149 drivers)
+  Test (amateur) laps:  178  (178 drivers)
+
+Train lap-time range: 99.611s – 101.386s
+Test  lap-time range: 102.444s – 102.839s
+
+train_telemetry.npy  →  (149, 1000, 9)
+test_telemetry.npy   →  (178, 1000, 9)
+train_latlon.npy     →  (149, 1000, 2)
+test_latlon.npy      →  (178, 1000, 2)

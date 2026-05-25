@@ -1,0 +1,20 @@
+FINAL DATASET CREATION — FILTERING REPORT
+
+Raw laps loaded: 132
+Unique drivers: 86
+Telemetry matrix: (132, 1000, 10)
+
+Extra data merged: ['driver', 'lap_time_s', 'lap_time_str', 'lap_id', 'n_samples', 'filename', 'air_temp', 'track_temp', 'track_usage', 'humidity', 'wind_vel', 'wind_dir', 'precipitation', 'cloud_cover', 'fog_level', 'fuel_level', 'fuel_used', 'tire_compound']
+
+============================================================
+FINAL RESULT
+  Train (expert) laps:  18  (10 drivers)
+  Test (amateur) laps:  21  (19 drivers)
+
+Train lap-time range: 99.956s – 100.524s
+Test  lap-time range: 102.481s – 129.800s
+
+train_telemetry.npy  →  (18, 1000, 10)
+test_telemetry.npy   →  (21, 1000, 10)
+train_latlon.npy     →  (18, 1000, 2)
+test_latlon.npy      →  (21, 1000, 2)
