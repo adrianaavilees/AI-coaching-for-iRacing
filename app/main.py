@@ -161,6 +161,14 @@ with st.sidebar:
                 ),
                 key="lap_select",
             )
+            active_lap_info = laps_info[selected_lap - 1] if selected_lap <= len(laps_info) else {}
+            st.markdown(f"""
+            <div class="active-lap-panel">
+                <div class="active-lap-kicker">Currently viewing</div>
+                <div class="active-lap-title">Lap {selected_lap}</div>
+                <div class="active-lap-meta">{active_lap_info.get('lap_time', 'N/A')}</div>
+            </div>
+            """, unsafe_allow_html=True)
         else:
             selected_lap = 1
 
@@ -282,14 +290,6 @@ def _show_processing_overlay(placeholder, title="Reading telemetry and running a
         <div class="processing-content">
             <div class="processing-spinner"></div>
             <div class="processing-title">{title}</div>
-            <div class="processing-subtitle">
-                Parsing the Garage61 CSV, rebuilding the lap trace, and detecting coaching zones.
-            </div>
-            <div class="processing-steps">
-                <div class="processing-step">Reading telemetry channels</div>
-                <div class="processing-step">Running autoencoder analysis</div>
-                <div class="processing-step">Preparing circuit coaching map</div>
-            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)

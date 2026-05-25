@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 
 from app.components.ui import section_header, empty_state
 from app.components.charts import (
-    multi_lap_overlay, error_heatmap, lap_consistency_chart,
+    multi_lap_overlay, lap_consistency_chart,
 )
 from app.theme import COLORS, CHANNEL_DISPLAY_NAMES, CHANNEL_COLORS, PLOTLY_LAYOUT
 
@@ -44,7 +44,7 @@ def render(session: dict):
     n_laps = len(laps_data)
 
     # ── Tabs ─────────────────────────────────────────────────────────────────
-    tab_multi, tab_sector, tab_heatmap, tab_consistency = st.tabs([
+    tab_multi, tab_sector, tab_consistency = st.tabs([
         "🔄 Multi-Lap Comparison",
         "📐 Sector Analysis",
         "📈 Consistency Deep Dive",

@@ -11,7 +11,7 @@ import html
 from app.components.ui import section_header, kpi_card
 from app.components.charts import track_map
 from app.data_loader import TRACK_INFO, CAR_INFO, get_severity_color
-from app.theme import COLORS
+from app.theme import COLORS, CHANNEL_DISPLAY_NAMES
 
 
 def render(session: dict):
@@ -87,6 +87,8 @@ def render(session: dict):
         best_lap_time = min(lap_times)
         best_lap_idx = lap_times.index(best_lap_time)
         best_lap_str = laps_data[best_lap_idx].get("lap_time", f"{best_lap_time:.3f}")
+        current_lap_data = laps_data[selected_lap - 1] if selected_lap <= len(laps_data) else laps_data[0]
+        current_lap_time = current_lap_data.get("lap_time", f"{current_lap_data.get('lap_time_s', 0):.3f}")
 
         # Expert best for delta
         if train_meta is not None and "lap_time_s" in train_meta.columns:
@@ -110,7 +112,7 @@ def render(session: dict):
         with k1:
             kpi_card("Current Lap", f"Lap {selected_lap}", icon="🏁")
         with k2:
-            kpi_card("Best Lap", best_lap_str, icon="⚡")
+            kpi_card("Current Lap Time", current_lap_time, icon="⚡")
         with k3:
             kpi_card("Delta vs Expert", delta_str,
                      delta_type="negative" if delta > 0 else "positive", icon="⏱️")
@@ -250,7 +252,8 @@ def _render_zone_buttons(zones: list):
 
 def _render_zone_detail(zone: dict):
     feedback = zone.get("llm_feedback") or zone.get("template_feedback") or "Open this zone for detailed coaching."
-    feedback = html.escape(_clean_feedback_text(feedback))
+    raw_feedback = _clean_feedback_text(feedback)
+    feedback = html.escape(raw_feedback)
     severity = zone.get("severity_score", 0)
     time_loss = zone.get("estimated_time_loss_s", 0)
     color = get_severity_color(severity)
@@ -269,21 +272,93 @@ def _render_zone_detail(zone: dict):
     </div>
     """, unsafe_allow_html=True)
 
-    dom_channels = zone.get("dominant_channels", [])
-    sig = [d for d in dom_channels if d.get("severity", 0) > 0.1][:4]
+    sig = _key_deviations_for_feedback(zone, raw_feedback)
     if sig:
-        st.markdown(f"<div style='margin-top: 12px; font-size: 0.85rem; color: {COLORS['text_secondary']}; font-weight: 600;'>KEY DEVIATIONS</div>", unsafe_allow_html=True)
-        for d in sig:
-            arrow = "▲" if d["direction"] == "over" else "▼"
-            value_color = COLORS["bad"] if d["direction"] == "over" else COLORS["medium"]
+        st.markdown(f"<div style='margin-top: 12px; font-size: 0.85rem; color: {COLORS['text_secondary']}; font-weight: 600;'>KEY TELEMETRY DEVIATIONS</div>", unsafe_allow_html=True)
+        for deviation in sig:
+            arrow = "▲" if deviation["direction"] == "over" else "▼"
+            value_color = COLORS["bad"] if deviation["direction"] == "over" else COLORS["medium"]
+            channel_name = CHANNEL_DISPLAY_NAMES.get(deviation["channel"], deviation["channel"])
+            value = abs(float(deviation.get("signed_mean", 0)))
+            unit = deviation.get("unit", "")
+            explanation = html.escape(_deviation_explanation(deviation))
             st.markdown(f"""
-            <div class="deviation-row">
-                <span class="deviation-channel">{arrow} {d['channel']}</span>
-                <span class="deviation-value" style="color: {value_color};">
-                    {abs(d['signed_mean']):.1f} {d.get('unit', '')}
-                </span>
+            <div class="deviation-hover-card">
+                <div class="deviation-row deviation-row-hover">
+                    <span class="deviation-channel">{arrow} {channel_name}</span>
+                    <span class="deviation-value" style="color: {value_color};">
+                        {value:.1f} {unit}
+                    </span>
+                </div>
+                <div class="deviation-explanation">{explanation}</div>
             </div>
             """, unsafe_allow_html=True)
+
+
+def _key_deviations_for_feedback(zone: dict, feedback: str, limit: int = 4) -> list:
+    channels = zone.get("dominant_channels", []) or []
+    if not channels:
+        return []
+
+    feedback_text = feedback.lower()
+    terms_by_channel = {
+        "Speed": ["speed", "km/h", "pace", "faster", "slower"],
+        "Throttle": ["throttle", "gas", "power", "accelerat"],
+        "Brake": ["brake", "braking", "trail-brak", "brake pressure"],
+        "SteeringWheelAngle": ["steering", "wheel", "turn", "rotation", "input"],
+        "RPM": ["rpm", "revs", "engine"],
+        "Gear": ["gear", "shift"],
+        "LatAccel": ["lateral", "lat", "cornering", "grip"],
+        "LongAccel": ["longitudinal", "acceleration", "deceleration"],
+        "YawRate": ["yaw", "rotation", "rotate"],
+    }
+
+    def feedback_match_score(deviation: dict) -> int:
+        channel = deviation.get("channel", "")
+        terms = terms_by_channel.get(channel, [channel.lower()])
+        return 1 if any(term in feedback_text for term in terms) else 0
+
+    sorted_channels = sorted(
+        channels,
+        key=lambda deviation: (
+            feedback_match_score(deviation),
+            float(deviation.get("severity", 0)),
+            abs(float(deviation.get("signed_mean", 0))),
+        ),
+        reverse=True,
+    )
+    return sorted_channels[:limit]
+
+
+def _deviation_explanation(deviation: dict) -> str:
+    channel = deviation.get("channel", "")
+    direction = deviation.get("direction", "over")
+    value = abs(float(deviation.get("signed_mean", 0)))
+    unit = deviation.get("unit", "")
+    unit_text = f" {unit}" if unit else ""
+
+    if channel == "Speed":
+        relation = "faster" if direction == "over" else "slower"
+        return f"You are {relation} than expert by {value:.1f}{unit_text}."
+    if channel == "SteeringWheelAngle":
+        relation = "more" if direction == "over" else "less"
+        return f"You use {relation} steering than expert by {value:.1f}{unit_text}."
+    if channel == "Throttle":
+        relation = "more" if direction == "over" else "less"
+        return f"You use {relation} throttle than expert by {value:.1f}{unit_text}."
+    if channel == "Brake":
+        relation = "more" if direction == "over" else "less"
+        return f"You use {relation} brake than expert by {value:.1f}{unit_text}."
+    if channel == "RPM":
+        relation = "higher" if direction == "over" else "lower"
+        return f"Your engine RPM is {relation} than expert by {value:.1f}{unit_text}."
+    if channel == "Gear":
+        relation = "higher" if direction == "over" else "lower"
+        return f"You are using a {relation} gear than expert by {value:.1f}{unit_text}."
+
+    channel_name = CHANNEL_DISPLAY_NAMES.get(channel, channel)
+    relation = "above" if direction == "over" else "below"
+    return f"Your {channel_name} is {relation} the expert pattern by {value:.1f}{unit_text}."
 
 
 def _clean_feedback_text(feedback) -> str:

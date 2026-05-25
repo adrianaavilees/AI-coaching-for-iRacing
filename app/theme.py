@@ -147,6 +147,38 @@ section[data-testid="stSidebar"] .stRadio > label {
     font-weight: 500;
 }
 
+.active-lap-panel {
+    margin-top: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,30,30,0.34);
+    background: linear-gradient(135deg, rgba(255,30,30,0.14), rgba(22,27,34,0.72));
+    box-shadow: 0 12px 32px rgba(255,30,30,0.08);
+}
+
+.active-lap-kicker {
+    color: #8B949E;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-size: 0.62rem;
+    font-weight: 800;
+}
+
+.active-lap-title {
+    color: #E6EDF3;
+    font-size: 1.45rem;
+    font-weight: 900;
+    margin-top: 4px;
+}
+
+.active-lap-meta {
+    color: #FF6B6B;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
 /* ── KPI Cards ─────────────────────────────────────────────────────────── */
 .kpi-card {
     background: linear-gradient(135deg, #161B22 0%, #1C2333 100%);
@@ -524,6 +556,40 @@ div[data-testid="column"] [data-testid="stButton"] button[kind="primary"] {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
     font-weight: 500;
+}
+
+.deviation-hover-card {
+    margin-bottom: 6px;
+}
+
+.deviation-row-hover {
+    cursor: default;
+    border: 1px solid transparent;
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.deviation-hover-card:hover .deviation-row-hover {
+    background: rgba(22, 27, 34, 0.82);
+    border-color: rgba(255,255,255,0.08);
+}
+
+.deviation-explanation {
+    color: #C9D1D9;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0 12px;
+    transform: translateY(-4px);
+    transition: max-height 0.22s ease, opacity 0.18s ease, padding 0.18s ease, transform 0.18s ease;
+}
+
+.deviation-hover-card:hover .deviation-explanation {
+    max-height: 80px;
+    opacity: 1;
+    padding: 8px 12px 10px;
+    transform: translateY(0);
 }
 
 /* ── Expander Styling ──────────────────────────────────────────────────── */
