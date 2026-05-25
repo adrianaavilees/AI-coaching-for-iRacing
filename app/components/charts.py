@@ -256,12 +256,26 @@ def _feedback_preview(zone: dict, max_chars: int = 96) -> str:
     text = zone.get("llm_feedback") or zone.get("template_feedback") or "Open this zone for detailed coaching."
     text = re.sub(r"[═━█]+", " ", str(text))
     text = re.sub(r"\s+", " ", text).strip()
+    text = _strip_wrapping_quotes(text)
     sentence = re.split(r"(?<=[.!?])\s+", text, maxsplit=1)[0]
     if 28 <= len(sentence) <= max_chars:
         text = sentence
     text = text.replace("<", "&lt;").replace(">", "&gt;")
     if len(text) > max_chars:
         text = text[:max_chars].rsplit(" ", 1)[0] + "..."
+    return text
+
+
+def _strip_wrapping_quotes(text: str) -> str:
+    quote_pairs = [('"', '"'), ("'", "'"), ('“', '”'), ('‘', '’')]
+    changed = True
+    while changed and len(text) >= 2:
+        changed = False
+        for left, right in quote_pairs:
+            if text.startswith(left) and text.endswith(right):
+                text = text[1:-1].strip()
+                changed = True
+                break
     return text
 
 
@@ -326,7 +340,7 @@ def error_heatmap(error_per_point: np.ndarray, channels: list = None) -> go.Figu
             [1.0, "#FFEB3B"],
         ],
         colorbar=dict(
-            title="Error", titlefont=dict(color=COLORS["text_secondary"]),
+            title=dict(text="Error", font=dict(color=COLORS["text_secondary"])),
             tickfont=dict(color=COLORS["text_secondary"]),
         ),
         hovertemplate="Distance: %{x:.1f}%<br>Channel: %{y}<br>Error: %{z:.4f}<extra></extra>",

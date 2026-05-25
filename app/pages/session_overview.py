@@ -108,7 +108,7 @@ def render(session: dict):
         k1, k2, k3, k4, k5 = st.columns(5)
 
         with k1:
-            kpi_card("Laps Analysed", str(n_laps), icon="📊")
+            kpi_card("Current Lap", f"Lap {selected_lap}", icon="🏁")
         with k2:
             kpi_card("Best Lap", best_lap_str, icon="⚡")
         with k3:
@@ -250,8 +250,7 @@ def _render_zone_buttons(zones: list):
 
 def _render_zone_detail(zone: dict):
     feedback = zone.get("llm_feedback") or zone.get("template_feedback") or "Open this zone for detailed coaching."
-    feedback = " ".join(str(feedback).replace("\n", " ").split())
-    feedback = html.escape(feedback)
+    feedback = html.escape(_clean_feedback_text(feedback))
     severity = zone.get("severity_score", 0)
     time_loss = zone.get("estimated_time_loss_s", 0)
     color = get_severity_color(severity)
@@ -259,9 +258,9 @@ def _render_zone_detail(zone: dict):
     <div class="overview-zone-card" style="border-top-color: {color};">
         <div class="overview-zone-kicker">Selected coaching zone</div>
         <div class="overview-zone-title">Zone {zone.get('zone_id', 0)} · {zone.get('lap_pct_start', 0):.1f}% → {zone.get('lap_pct_end', 0):.1f}%</div>
-        <div class="metric-row" style="margin: 12px 0;">
-            <div class="metric-item"><span class="metric-value" style="color: {COLORS['bad']};">~{time_loss:.3f}s</span><span class="metric-label">Time Lost</span></div>
-            <div class="metric-item"><span class="metric-value">{severity:.0%}</span><span class="metric-label">Priority</span></div>
+        <div class="overview-zone-metrics">
+            <div class="overview-zone-metric"><span class="overview-zone-metric-value" style="color: {COLORS['bad']};">~{time_loss:.3f}s</span><span class="overview-zone-metric-label">Time Lost</span></div>
+            <div class="overview-zone-metric"><span class="overview-zone-metric-value">{severity:.0%}</span><span class="overview-zone-metric-label">Priority</span></div>
         </div>
     </div>
     <div class="ai-zone-panel">
@@ -285,3 +284,17 @@ def _render_zone_detail(zone: dict):
                 </span>
             </div>
             """, unsafe_allow_html=True)
+
+
+def _clean_feedback_text(feedback) -> str:
+    text = " ".join(str(feedback).replace("\n", " ").split())
+    quote_pairs = [('"', '"'), ("'", "'"), ('“', '”'), ('‘', '’')]
+    changed = True
+    while changed and len(text) >= 2:
+        changed = False
+        for left, right in quote_pairs:
+            if text.startswith(left) and text.endswith(right):
+                text = text[1:-1].strip()
+                changed = True
+                break
+    return text

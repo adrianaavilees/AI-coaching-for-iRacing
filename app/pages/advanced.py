@@ -6,12 +6,13 @@ Multi-lap comparison, sector analysis, lap consistency, and reconstruction error
 
 import streamlit as st
 import numpy as np
+import plotly.graph_objects as go
 
 from app.components.ui import section_header, empty_state
 from app.components.charts import (
     multi_lap_overlay, error_heatmap, lap_consistency_chart,
 )
-from app.theme import COLORS, CHANNEL_DISPLAY_NAMES
+from app.theme import COLORS, CHANNEL_DISPLAY_NAMES, CHANNEL_COLORS, PLOTLY_LAYOUT
 
 import sys
 from pathlib import Path
@@ -31,6 +32,7 @@ def render(session: dict):
     summary = session.get("summary", {})
     expert_mse_mean = session.get("expert_mse", 0.0)
     expert_mse_std = session.get("expert_mse_std", 0.0)
+    latlon = session.get("latlon")
 
     section_header("Advanced Analysis", "⚙️")
 
@@ -45,7 +47,6 @@ def render(session: dict):
     tab_multi, tab_sector, tab_heatmap, tab_consistency = st.tabs([
         "🔄 Multi-Lap Comparison",
         "📐 Sector Analysis",
-        "🔥 Error Heatmap",
         "📈 Consistency Deep Dive",
     ])
 
@@ -71,7 +72,9 @@ def render(session: dict):
                 key="multi_lap_selection",
             )
 
-            if selected_laps:
+            if len(selected_laps) < 2:
+                st.info("Select at least 2 laps to compare.")
+            else:
                 indices = [l - 1 for l in selected_laps]
                 laps_raw = amateur_result["denorm"][indices]
                 lap_labels = [
@@ -136,16 +139,28 @@ def render(session: dict):
             best_sector = min(sector_data, key=lambda x: x["mse"])
             worst_sector = max(sector_data, key=lambda x: x["mse"])
 
+            sector_color_map = _sector_color_map(sector_data, best_sector, worst_sector)
+
+            if latlon is not None and lap_idx < len(latlon):
+                st.plotly_chart(
+                    _sector_track_map(latlon[lap_idx], sector_data, sector_color_map),
+                    use_container_width=True,
+                    config={"displayModeBar": False},
+                )
+                st.markdown(f"""
+                <div style="font-size: 0.78rem; color: {COLORS['text_muted']}; text-align: center; margin: -4px 0 16px;">
+                    Sector colours match this lap's reconstruction error: green = best sector, yellow = middle, red = worst sector.
+                </div>
+                """, unsafe_allow_html=True)
+
             for col, sd in zip(cols, sector_data):
                 with col:
+                    border_color = sector_color_map[sd["sector"]]
                     if sd["sector"] == best_sector["sector"]:
-                        border_color = COLORS["good"]
                         label = "BEST"
                     elif sd["sector"] == worst_sector["sector"]:
-                        border_color = COLORS["bad"]
                         label = "WORST"
                     else:
-                        border_color = COLORS["medium"]
                         label = ""
 
                     label_html = f'<span style="font-size: 0.65rem; background: {border_color}20; color: {border_color}; padding: 2px 8px; border-radius: 10px; margin-left: 8px;">{label}</span>' if label else ""
@@ -166,9 +181,6 @@ def render(session: dict):
             # Per-channel sector breakdown
             st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
             st.markdown(f"<div style='font-size: 0.85rem; font-weight: 600; color: {COLORS['text_secondary']};'>PER-CHANNEL SECTOR BREAKDOWN</div>", unsafe_allow_html=True)
-
-            import plotly.graph_objects as go
-            from app.theme import PLOTLY_LAYOUT
 
             channels_to_show = ["Speed", "Throttle", "Brake", "SteeringWheelAngle"]
             sector_labels = [f"S{sd['sector']}" for sd in sector_data]
@@ -198,29 +210,6 @@ def render(session: dict):
             )
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-    # ── Error Heatmap ────────────────────────────────────────────────────────
-    with tab_heatmap:
-        section_header("Error Heatmap Comparison", "🔥")
-
-        if n_laps >= 1:
-            heatmap_lap = st.selectbox(
-                "Select lap",
-                range(1, n_laps + 1),
-                format_func=lambda l: f"Lap {l} — {laps_data[l-1].get('lap_time', '')}" if l <= len(laps_data) else f"Lap {l}",
-                key="heatmap_lap",
-            )
-
-            lap_idx = heatmap_lap - 1
-            if lap_idx < len(amateur_result["error"]):
-                fig = error_heatmap(amateur_result["error"][lap_idx])
-                st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
-
-                st.markdown(f"""
-                <div style="font-size: 0.8rem; color: {COLORS['text_muted']}; text-align: center;">
-                    Bright bands indicate sections where your driving deviates most from expert patterns.
-                    Horizontal patterns suggest global issues; vertical patterns indicate specific corners.
-                </div>
-                """, unsafe_allow_html=True)
 
     # ── Consistency Deep Dive ────────────────────────────────────────────────
     with tab_consistency:
@@ -273,13 +262,9 @@ def render(session: dict):
             # Per-lap error evolution per channel
             st.markdown(f"<div style='font-size: 0.85rem; font-weight: 600; color: {COLORS['text_secondary']}; margin: 24px 0 8px;'>ERROR EVOLUTION BY CHANNEL</div>", unsafe_allow_html=True)
 
-            import plotly.graph_objects as go
-            from app.theme import PLOTLY_LAYOUT
-
             fig = go.Figure()
             channels_to_track = ["Speed", "Throttle", "Brake", "SteeringWheelAngle"]
 
-            from app.theme import CHANNEL_COLORS
             for ch_name in channels_to_track:
                 ch_idx = FEATURE_COLS.index(ch_name)
                 ch_errors = [float(amateur_result["error"][l, :, ch_idx].mean())
@@ -298,3 +283,86 @@ def render(session: dict):
             )
             fig.update_xaxes(tickmode="linear", dtick=1, gridcolor=COLORS["grid"])
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+
+def _sector_color_map(sector_data: list, best_sector: dict, worst_sector: dict) -> dict:
+    colors = {}
+    for sector in sector_data:
+        sector_id = sector["sector"]
+        if sector_id == best_sector["sector"]:
+            colors[sector_id] = COLORS["good"]
+        elif sector_id == worst_sector["sector"]:
+            colors[sector_id] = COLORS["bad"]
+        else:
+            colors[sector_id] = COLORS["medium"]
+    return colors
+
+
+def _sector_track_map(latlon: np.ndarray, sector_data: list, sector_colors: dict) -> go.Figure:
+    lat = latlon[:, 0]
+    lon = latlon[:, 1]
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=lon,
+        y=lat,
+        mode="lines",
+        line=dict(color=COLORS["text_muted"], width=3),
+        name="Track",
+        hoverinfo="skip",
+        showlegend=False,
+    ))
+
+    for sector in sector_data:
+        sector_id = sector["sector"]
+        idx_s = int(sector["start_pct"] / 100 * (N_POINTS - 1))
+        idx_e = int(sector["end_pct"] / 100 * (N_POINTS - 1))
+        idx_e = max(idx_s + 1, min(idx_e, N_POINTS - 1))
+        color = sector_colors[sector_id]
+
+        fig.add_trace(go.Scatter(
+            x=lon[idx_s:idx_e + 1],
+            y=lat[idx_s:idx_e + 1],
+            mode="lines",
+            line=dict(color=color, width=7),
+            name=f"Sector {sector_id}",
+            customdata=[[sector_id, sector["start_pct"], sector["end_pct"], sector["mse"]]],
+            hovertemplate=(
+                "<b>Sector %{customdata[0]}</b><br>"
+                "%{customdata[1]:.0f}% - %{customdata[2]:.0f}%<br>"
+                "MSE: %{customdata[3]:.6f}<extra></extra>"
+            ),
+        ))
+
+        mid = (idx_s + idx_e) // 2
+        fig.add_trace(go.Scatter(
+            x=[lon[mid]],
+            y=[lat[mid]],
+            mode="markers+text",
+            marker=dict(color=color, size=18, symbol="circle", line=dict(color=COLORS["bg_primary"], width=2)),
+            text=[f"S{sector_id}"],
+            textposition="middle center",
+            textfont=dict(size=10, color="#FFFFFF", family="Inter"),
+            hoverinfo="skip",
+            showlegend=False,
+        ))
+
+    fig.add_trace(go.Scatter(
+        x=[lon[0]],
+        y=[lat[0]],
+        mode="markers",
+        marker=dict(color=COLORS["accent"], size=12, symbol="diamond", line=dict(color="white", width=2)),
+        name="Start/Finish",
+        hovertemplate="<b>Start/Finish</b><extra></extra>",
+    ))
+
+    fig.update_layout(
+        **{k: v for k, v in PLOTLY_LAYOUT.items() if k not in ("legend", "margin")},
+        height=360,
+        margin=dict(l=10, r=10, t=10, b=30),
+        showlegend=True,
+        legend=dict(orientation="h", yanchor="top", y=-0.02, xanchor="center", x=0.5),
+    )
+    fig.update_xaxes(visible=False, scaleanchor="y", scaleratio=1)
+    fig.update_yaxes(visible=False)
+    return fig

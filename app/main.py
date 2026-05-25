@@ -74,14 +74,16 @@ def _check_and_apply_phase3():
         return
 
     if sd.get("_phase3_done") and sd.get("_phase3_result"):
-        report = sd["_phase3_result"]
-        sd["reports"] = {1: report}
+        result = sd["_phase3_result"]
+        reports = result if isinstance(result, dict) and all(isinstance(k, int) for k in result.keys()) else {1: result}
+        sd["reports"].update(reports)
 
-        # Update summary with LLM-derived data
-        if sd["summary"]["laps"]:
-            sd["summary"]["laps"][0]["n_coaching_zones"] = report.get("n_zones", 0)
-            sd["summary"]["laps"][0]["overall_severity"] = report.get("overall_severity", 0)
-            sd["summary"]["laps"][0]["estimated_time_loss_s"] = report.get("estimated_time_loss_s", 0)
+        for lap_num, report in reports.items():
+            lap_idx = lap_num - 1
+            if lap_idx < len(sd["summary"].get("laps", [])):
+                sd["summary"]["laps"][lap_idx]["n_coaching_zones"] = report.get("n_zones", 0)
+                sd["summary"]["laps"][lap_idx]["overall_severity"] = report.get("overall_severity", 0)
+                sd["summary"]["laps"][lap_idx]["estimated_time_loss_s"] = report.get("estimated_time_loss_s", 0)
 
         sd["_phase3_applied"] = True
         sd["_phase3_result"] = None  # free memory
@@ -187,24 +189,91 @@ with st.sidebar:
 # ─── Handle Upload → Progressive Pipeline ───────────────────────────────────
 
 def _run_progressive_pipeline(uploaded_files):
-    """Execute Phases 1→2 synchronously, then launch Phase 3 in background."""
-    if len(uploaded_files) != 1:
-        st.warning("Multi-lap progressive loading: processing first file.")
+    """Execute Phases 1→2 for all new uploads and append them to the session."""
+    existing = st.session_state.get("session_data")
+    seen_filenames = set(existing.get("uploaded_filenames", [])) if existing else set()
+    new_files = [uf for uf in uploaded_files if uf.name not in seen_filenames]
 
-    uf = uploaded_files[0]
+    if not new_files and existing is not None:
+        return
 
-    # ── Phase 1: Instant parse ───────────────────────────────────────────
-    phase1 = run_phase1(uf)
+    processed_sessions = []
+    for uf in new_files:
+        phase1 = run_phase1(uf)
+        lap_session = run_phase2(phase1)
+        lap_session["uploaded_filenames"] = [uf.name]
+        processed_sessions.append(lap_session)
 
-    # ── Phase 2: Autoencoder inference ───────────────────────────────────
-    session_data = run_phase2(phase1)
+    if existing is not None:
+        session_data = _append_lap_sessions(existing, processed_sessions)
+    else:
+        session_data = _combine_lap_sessions(processed_sessions)
 
-    # Store in session state immediately — UI can render
     st.session_state["session_data"] = session_data
     st.session_state["active_page"] = "session_overview"
+    session_data["_phase3_applied"] = False
 
-    # ── Phase 3: LLM feedback in background ──────────────────────────────
     start_phase3_background(session_data)
+
+
+def _append_lap_sessions(existing: dict, new_sessions: list[dict]) -> dict:
+    if not new_sessions:
+        return existing
+    return _combine_lap_sessions([existing, *new_sessions])
+
+
+def _combine_lap_sessions(sessions: list[dict]) -> dict:
+    """Merge one-lap pipeline outputs into a single multi-lap session."""
+    if not sessions:
+        raise ValueError("No telemetry files were processed.")
+
+    base = sessions[0]
+    combined_summary = dict(base["summary"])
+    combined_summary["laps"] = []
+    combined_reports = {}
+    uploaded_filenames = []
+
+    result_keys = ["norm", "recon_norm", "denorm", "recon_denorm", "error", "mse_per_lap"]
+    combined_result = {key: [] for key in result_keys}
+    latlon_batches = []
+
+    for session in sessions:
+        filenames = session.get("uploaded_filenames", [])
+        uploaded_filenames.extend(name for name in filenames if name not in uploaded_filenames)
+
+        lap_offset = len(combined_summary["laps"])
+        for local_idx, lap in enumerate(session["summary"].get("laps", []), start=1):
+            lap_number = lap_offset + local_idx
+            lap_data = dict(lap)
+            lap_data["lap_number"] = lap_number
+            lap_data["lap"] = lap_number
+            combined_summary["laps"].append(lap_data)
+
+            report = session.get("reports", {}).get(local_idx)
+            if report:
+                combined_reports[lap_number] = report
+
+        for key in result_keys:
+            combined_result[key].append(session["amateur_result"][key])
+        latlon_batches.append(session["latlon"])
+
+    combined_summary["n_laps"] = len(combined_summary["laps"])
+    if combined_summary["laps"]:
+        combined_summary["driver"] = base.get("driver") or combined_summary.get("driver", "Unknown Driver")
+
+    for key in result_keys:
+        combined_result[key] = np.concatenate(combined_result[key], axis=0)
+
+    return {
+        **base,
+        "summary": combined_summary,
+        "reports": combined_reports,
+        "amateur_result": combined_result,
+        "latlon": np.concatenate(latlon_batches, axis=0),
+        "uploaded_filenames": uploaded_filenames,
+        "lap_time_s": combined_summary["laps"][0].get("lap_time_s", base.get("lap_time_s", 0.0)) if combined_summary["laps"] else base.get("lap_time_s", 0.0),
+        "lap_time_str": combined_summary["laps"][0].get("lap_time", base.get("lap_time_str", "N/A")) if combined_summary["laps"] else base.get("lap_time_str", "N/A"),
+    }
 
 
 def _show_processing_overlay(placeholder, title="Reading telemetry and running analysis..."):

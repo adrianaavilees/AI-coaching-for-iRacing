@@ -406,6 +406,33 @@ div[data-testid="column"] [data-testid="stButton"] button[kind="primary"] {
     font-size: 0.78rem;
 }
 
+.overview-zone-metrics {
+    display: flex;
+    gap: 28px;
+    margin: 16px 0 4px 0;
+}
+
+.overview-zone-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.overview-zone-metric-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #E6EDF3;
+}
+
+.overview-zone-metric-label {
+    color: #8B949E;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
 .ai-zone-panel {
     margin-top: 14px;
     padding: 18px 20px;

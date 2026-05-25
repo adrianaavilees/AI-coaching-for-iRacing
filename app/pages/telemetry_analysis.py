@@ -112,23 +112,23 @@ def render(session: dict):
     delta_fig = delta_time_chart(amateur_lap, expert_lap, lap_time_s)
     st.plotly_chart(delta_fig, use_container_width=True, config={"displayModeBar": False})
 
-    # ── Driver Focus Timeline ────────────────────────────────────────────────
-    section_header("Coaching Priority by Lap Position", "🎯")
-    focus_fig = zone_focus_timeline(zones)
-    st.plotly_chart(focus_fig, use_container_width=True, config={"displayModeBar": False})
-
-    st.markdown(f"""
-    <div style="font-size: 0.85rem; color: {COLORS['text_secondary']}; text-align: center; margin-top: 8px;">
-        The horizontal line is your lap from 0% to 100%. Colored blocks are the zones where the AI found the largest coaching opportunity. Red blocks should be reviewed first.
-    </div>
-    """, unsafe_allow_html=True)
-
     # ── Zone Focus ───────────────────────────────────────────────────────────
-    selected_zone_data = st.session_state.get("selected_zone_data")
-    if selected_zone_data and zones:
+    if zones:
         section_header("Zone Focus", "🔍")
 
-        z = selected_zone_data
+        selected_idx = _zone_focus_default_index(zones)
+        selected_idx = st.selectbox(
+            "Zone to inspect",
+            range(len(zones)),
+            index=selected_idx,
+            format_func=lambda i: _zone_focus_label(zones[i]),
+            key=f"telemetry_zone_focus_{selected_lap}",
+        )
+
+        z = zones[selected_idx]
+        st.session_state["selected_zone"] = int(z.get("zone_id", selected_idx + 1))
+        st.session_state["selected_zone_data"] = z
+
         idx_s = z.get("idx_start", 0)
         idx_e = z.get("idx_end", len(amateur_lap) - 1)
         margin = max(20, (idx_e - idx_s) // 2)
@@ -170,3 +170,25 @@ def render(session: dict):
             )
 
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+
+def _zone_focus_default_index(zones: list) -> int:
+    selected_zone = st.session_state.get("selected_zone")
+    if selected_zone is not None:
+        for idx, zone in enumerate(zones):
+            if int(zone.get("zone_id", -1)) == int(selected_zone):
+                return idx
+    priority_zone = max(
+        enumerate(zones),
+        key=lambda item: item[1].get("estimated_time_loss_s", item[1].get("severity_score", 0)),
+    )
+    return priority_zone[0]
+
+
+def _zone_focus_label(zone: dict) -> str:
+    zone_id = zone.get("zone_id", 0)
+    start = zone.get("lap_pct_start", 0)
+    end = zone.get("lap_pct_end", 0)
+    priority = zone.get("severity_score", 0)
+    time_loss = zone.get("estimated_time_loss_s", 0)
+    return f"Zone {zone_id} · {start:.1f}% - {end:.1f}% · {priority:.0%} priority · ~{time_loss:.3f}s"

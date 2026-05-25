@@ -384,7 +384,7 @@ def run_phase2(phase1: dict) -> dict:
 
 # ─── Phase 3: Background — LLM feedback generation ──────────────────────────
 
-def run_phase3(session_data: dict) -> dict:
+def run_phase3(session_data: dict, lap_idx: int = 0) -> dict:
     """
     Generate LLM coaching feedback. This is the slowest phase and runs
     in a background thread. Returns the updated reports dict.
@@ -393,17 +393,18 @@ def run_phase3(session_data: dict) -> dict:
     recon_denorm = session_data["amateur_result"]["recon_denorm"]
     expert_mse_mean, _, _ = _get_expert_baseline_stats()
     expert_baseline_sq = np.full((N_POINTS, N_FEATURES), expert_mse_mean, dtype=np.float32)
-    lap_time_s = session_data["lap_time_s"]
+    laps = session_data.get("summary", {}).get("laps", [])
+    lap_time_s = laps[lap_idx].get("lap_time_s", session_data.get("lap_time_s", 100.0)) if lap_idx < len(laps) else session_data.get("lap_time_s", 100.0)
 
-    cache_key = _telemetry_hash(denorm[0])
+    cache_key = _telemetry_hash(denorm[lap_idx])
     cached = _get_cached_feedback(cache_key)
 
     if cached is not None:
         return _normalise_report_for_ui(cached)
 
     report = generate_feedback(
-        amateur_raw=denorm[0],
-        expert_recon_raw=recon_denorm[0],
+        amateur_raw=denorm[lap_idx],
+        expert_recon_raw=recon_denorm[lap_idx],
         expert_baseline_sq_error=expert_baseline_sq,
         lap_time_s=lap_time_s,
         top_k=5,
@@ -424,7 +425,8 @@ def start_phase3_background(session_data: dict):
     """
     def _worker():
         try:
-            result = run_phase3(session_data)
+            n_laps = session_data.get("summary", {}).get("n_laps", 1)
+            result = {lap: run_phase3(session_data, lap_idx=lap - 1) for lap in range(1, n_laps + 1)}
             # Store in a thread-safe way via the dict reference
             session_data["_phase3_result"] = result
             session_data["_phase3_done"] = True
