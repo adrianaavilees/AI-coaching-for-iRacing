@@ -6,4 +6,3 @@ models/*
 !models/scaler_params.npz
 .env
 TODO.md
-Informe_Progres_II.md
