@@ -17,7 +17,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from config import FEATURE_COLS, CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS, N_POINTS
+from utils.config import FEATURE_COLS, CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS, N_POINTS
 
 LAP_DIST = np.linspace(0, 100, N_POINTS)
 

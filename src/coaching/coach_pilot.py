@@ -5,16 +5,19 @@ Loads raw Garage61 CSVs → interpolates → normalises → reconstructs through
 """
 
 import json
+import sys
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-from create_final_dataset import load_raw_laps, build_telemetry_matrix
-from train_autoencoder import apply_normalization
-from evaluate_autoencoder import load_model, reconstruct_errors
-from feedback_engine import generate_feedback
-from config import (
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from data.create_final_dataset import load_raw_laps, build_telemetry_matrix
+from model.train_autoencoder import apply_normalization
+from model.evaluate_autoencoder import load_model, reconstruct_errors
+from coaching.feedback_engine import generate_feedback
+from utils.config import (
     ROOT_DIR, DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS,
 )
 

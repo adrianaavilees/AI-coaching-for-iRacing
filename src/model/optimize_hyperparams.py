@@ -7,6 +7,7 @@ Objective:
 """
 
 import json
+import sys
 import numpy as np
 from optuna import trial
 import pandas as pd
@@ -18,8 +19,10 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import KFold
 import optuna
 
-from config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, TRAIN_HP
-from train_autoencoder import (
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from utils.config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, TRAIN_HP
+from model.train_autoencoder import (
     LapDataset,
     LSTMAutoencoder,
     compute_scaler_params,

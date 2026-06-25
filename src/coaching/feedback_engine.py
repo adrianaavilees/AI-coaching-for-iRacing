@@ -25,11 +25,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import numpy as np
 from dotenv import load_dotenv
-from config import N_POINTS, CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS
-from statistical_analysis import (compute_signed_error, detect_zones, analyse_zone_channels,
+from utils.config import N_POINTS, CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS
+from coaching.statistical_analysis import (compute_signed_error, detect_zones, analyse_zone_channels,
                                    detect_causal_chains, compute_zone_severity, estimate_time_loss,
                                    ChannelDeviation, CausalChain)
-from template_feedback_fallback import render_zone_feedback, render_summary
+from coaching.template_feedback_fallback import render_zone_feedback, render_summary
 
 load_dotenv()
 

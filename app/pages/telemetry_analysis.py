@@ -21,7 +21,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from config import FEATURE_COLS, CHANNEL_UNITS, CHANNEL_DISPLAY_SCALE
+from utils.config import FEATURE_COLS, CHANNEL_UNITS, CHANNEL_DISPLAY_SCALE
 from app.theme import CHANNEL_DISPLAY_NAMES
 
 

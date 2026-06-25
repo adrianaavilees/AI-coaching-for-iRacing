@@ -27,16 +27,16 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from config import (
+from utils.config import (
     DATA_DIR, MODELS_DIR, FEATURE_COLS, LATLON_COLS, N_POINTS,
     HIDDEN_SIZE, LATENT_DIM, N_LAYERS,
     CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS,
     DRIVER_INPUT_COLS, VEHICLE_DYNAMIC_COLS,
 )
-from train_autoencoder import LSTMAutoencoder, apply_normalization
-from evaluate_autoencoder import load_model, reconstruct_errors
-from feedback_engine import generate_feedback
-from create_final_dataset import interpolate_lap
+from model.train_autoencoder import LSTMAutoencoder, apply_normalization
+from model.evaluate_autoencoder import load_model, reconstruct_errors
+from coaching.feedback_engine import generate_feedback
+from data.create_final_dataset import interpolate_lap
 
 
 N_FEATURES = len(FEATURE_COLS)

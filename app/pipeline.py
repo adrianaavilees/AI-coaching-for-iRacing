@@ -23,21 +23,24 @@ from pathlib import Path
 import sys
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
+SRC_DIR = ROOT_DIR / "src"
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
-from config import (
+from utils.config import (
     DATA_DIR, MODELS_DIR, FEATURE_COLS, LATLON_COLS, N_POINTS,
     HIDDEN_SIZE, LATENT_DIM, N_LAYERS,
     CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS,
 )
-from train_autoencoder import LSTMAutoencoder, apply_normalization
-from evaluate_autoencoder import load_model, reconstruct_errors
-from feedback_engine import generate_feedback
-from create_final_dataset import interpolate_lap
-from statistical_analysis import (compute_signed_error, detect_zones, analyse_zone_channels,
+from model.train_autoencoder import LSTMAutoencoder, apply_normalization
+from model.evaluate_autoencoder import load_model, reconstruct_errors
+from coaching.feedback_engine import generate_feedback
+from data.create_final_dataset import interpolate_lap
+from coaching.statistical_analysis import (compute_signed_error, detect_zones, analyse_zone_channels,
                                    detect_causal_chains, compute_zone_severity, estimate_time_loss)
-from template_feedback_fallback import render_zone_feedback, render_summary
+from coaching.template_feedback_fallback import render_zone_feedback, render_summary
 
 import re
 

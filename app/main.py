@@ -1,5 +1,5 @@
 """
-🏎️ AI Race Engineer — Intelligent Telemetry Coaching for iRacing GT3
+AI Race Engineer — Intelligent Telemetry Coaching for iRacing GT3
 
 Main Streamlit application entry point.
 Run with: streamlit run app/main.py

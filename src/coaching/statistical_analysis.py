@@ -7,7 +7,7 @@ It computes key metrics such as mean squared error (MSE), identifies dominant er
 import numpy as np
 from dataclasses import dataclass
 from scipy.ndimage import uniform_filter1d
-from config import FEATURE_COLS, N_POINTS, CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS
+from utils.config import FEATURE_COLS, N_POINTS, CHANNEL_DISPLAY_SCALE, CHANNEL_UNITS
 
 
 @dataclass

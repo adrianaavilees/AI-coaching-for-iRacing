@@ -28,12 +28,14 @@ Outputs (inside data/processed/):
 import re
 import numpy as np
 import pandas as pd
+import sys
 from pathlib import Path
 from scipy.interpolate import interp1d
-from config import FEATURE_COLS, LATLON_COLS, N_POINTS
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from utils.config import FEATURE_COLS, LATLON_COLS, N_POINTS
 
 
-ROOT_DIR = Path(__file__).resolve().parent
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 #RAW_LAPS_DIR = ROOT_DIR / "data" / "Ferrari 296 GT3" / "Imola"
 RAW_LAPS_DIR = ROOT_DIR / "data" / "garage61_csvs"
 #EXTRA_DATA_PATH = ROOT_DIR / "data" / "Ferrari 296 GT3" / "extra_data_Imola_Ferrari296.csv"

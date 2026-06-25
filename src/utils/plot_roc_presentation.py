@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from sklearn.metrics import roc_curve, roc_auc_score, precision_score, recall_score, f1_score
 
-ROOT_DIR = Path(__file__).parent
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_PATH = ROOT_DIR / "data" / "mse_expert_amateur_canva.csv"
 OUTPUT_PATH = ROOT_DIR / "models" / "eval" / "roc_curve_presentation.png"
 

@@ -10,7 +10,7 @@ Never hardcode these values in individual scripts.
 from pathlib import Path
 
 # Paths
-ROOT_DIR   = Path(__file__).resolve().parent
+ROOT_DIR   = Path(__file__).resolve().parent.parent.parent
 DATA_DIR   = ROOT_DIR / "data" / "processed"
 MODELS_DIR = ROOT_DIR / "models"
 MODELS_DIR.mkdir(parents=True, exist_ok=True)

@@ -13,8 +13,12 @@ Outputs (inside models/):
 """
 
 import json 
+import sys
 import time 
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -22,7 +26,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset, random_split
 from sklearn.model_selection import KFold
-from config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, HIDDEN_SIZE, LATENT_DIM, N_LAYERS,TRAIN_HP
+from utils.config import DATA_DIR, MODELS_DIR, FEATURE_COLS, N_POINTS, HIDDEN_SIZE, LATENT_DIM, N_LAYERS,TRAIN_HP
 
 TRAIN_META_PATH = DATA_DIR / "train_metadata.csv"
 

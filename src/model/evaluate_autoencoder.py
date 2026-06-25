@@ -4,6 +4,10 @@ Evaluate the trained LSTM Autoencoder on expert (train) and amateur (test) laps.
 
 from pathlib import Path
 import json
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import numpy as np
 import pandas as pd
 import torch
@@ -21,8 +25,8 @@ from sklearn.metrics import (
     confusion_matrix
 )
 
-from train_autoencoder import LSTMAutoencoder, apply_normalization
-from config import (
+from model.train_autoencoder import LSTMAutoencoder, apply_normalization
+from utils.config import (
     DATA_DIR, MODELS_DIR, EVAL_DIR, FEATURE_COLS, N_POINTS,
     HIDDEN_SIZE, LATENT_DIM, N_LAYERS,
     DRIVER_INPUT_COLS, VEHICLE_DYNAMIC_COLS,
