@@ -4,7 +4,7 @@ An end-to-end AI coaching system for iRacing sim-racing. It downloads real lap t
 
 [![App Overview](app%20overview.png)](https://ai-coaching-for-iracing.streamlit.app/)
 
-*Click the image to open the live app → [ai-coaching-for-iracing.streamlit.app](https://ai-coaching-for-iracing.streamlit.app/)*
+*Click the image to open the live app*
 
 ---
 
