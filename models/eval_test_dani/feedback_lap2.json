@@ -1,0 +1,543 @@
+{
+  "n_zones": 5,
+  "overall_severity": 1.0,
+  "estimated_time_loss_s": 1.027,
+  "zones": [
+    {
+      "zone_id": 1,
+      "lap_pct_start": 10.51,
+      "lap_pct_end": 16.82,
+      "idx_start": 105,
+      "idx_end": 168,
+      "severity_score": 1.0,
+      "dominant_channels": [
+        {
+          "channel": "RPM",
+          "signed_mean": 734.34,
+          "abs_mean": 734.34,
+          "unit": "rpm",
+          "direction": "under",
+          "severity": 1.0
+        },
+        {
+          "channel": "Throttle",
+          "signed_mean": 4.5,
+          "abs_mean": 10.47,
+          "unit": "%",
+          "direction": "under",
+          "severity": 0.014
+        },
+        {
+          "channel": "Brake",
+          "signed_mean": 1.0,
+          "abs_mean": 5.83,
+          "unit": "%",
+          "direction": "under",
+          "severity": 0.008
+        },
+        {
+          "channel": "SteeringWheelAngle",
+          "signed_mean": -2.61,
+          "abs_mean": 5.44,
+          "unit": "°",
+          "direction": "over",
+          "severity": 0.007
+        },
+        {
+          "channel": "Speed",
+          "signed_mean": 2.48,
+          "abs_mean": 4.15,
+          "unit": "km/h",
+          "direction": "under",
+          "severity": 0.006
+        },
+        {
+          "channel": "YawRate",
+          "signed_mean": -0.04,
+          "abs_mean": 3.02,
+          "unit": "°/s",
+          "direction": "over",
+          "severity": 0.004
+        },
+        {
+          "channel": "Gear",
+          "signed_mean": -0.6,
+          "abs_mean": 0.72,
+          "unit": "",
+          "direction": "over",
+          "severity": 0.001
+        },
+        {
+          "channel": "LatAccel",
+          "signed_mean": -0.01,
+          "abs_mean": 0.26,
+          "unit": "g",
+          "direction": "over",
+          "severity": 0.0
+        },
+        {
+          "channel": "LongAccel",
+          "signed_mean": 0.01,
+          "abs_mean": 0.2,
+          "unit": "g",
+          "direction": "under",
+          "severity": 0.0
+        }
+      ],
+      "causal_chains": [
+        {
+          "cause_channel": "Throttle",
+          "cause_direction": "under",
+          "effect_channel": "Speed",
+          "effect_direction": "under",
+          "confidence": 0.51,
+          "description": "Late throttle application compromises corner exit speed"
+        },
+        {
+          "cause_channel": "SteeringWheelAngle",
+          "cause_direction": "over",
+          "effect_channel": "Speed",
+          "effect_direction": "under",
+          "confidence": 0.22,
+          "description": "Excessive steering input scrubs speed through the corner"
+        }
+      ],
+      "template_feedback": "━━━ Zone 1 (10.5% – 16.8% of lap) ━━━\n  Severity: ██████████ (100%)\n  Estimated time impact: ~0.153s\n\n  Key deviations:\n    ▼ RPM: Engine RPM is lower than expected — check your gear selection\n      Deviation: 734.3 rpm below expert level\n\n  Root cause analysis:\n    → Late throttle application compromises corner exit speed (confidence: 51%)\n    💡 Tip: Get on the throttle earlier and more decisively on corner exit to maximise straight-line speed.\n    → Excessive steering input scrubs speed through the corner (confidence: 22%)\n    💡 Tip: Reduce steering angle — a straighter wheel lets the car roll faster. Work on your turn-in point.\n",
+      "llm_feedback": "You're currently running 734.3 rpm lower than the expert reconstruction, which is likely costing you corner exit speed. To improve, focus on getting on the throttle earlier and more aggressively, aiming to match the expert's RPM range. Additionally, try to reduce your steering input by 2.6 degrees to minimize speed scrubbing through the corner. By making these adjustments, you'll be able to carry more speed through the turn and improve your overall lap time."
+    },
+    {
+      "zone_id": 2,
+      "lap_pct_start": 33.33,
+      "lap_pct_end": 36.34,
+      "idx_start": 333,
+      "idx_end": 363,
+      "severity_score": 1.0,
+      "dominant_channels": [
+        {
+          "channel": "RPM",
+          "signed_mean": 601.88,
+          "abs_mean": 601.88,
+          "unit": "rpm",
+          "direction": "under",
+          "severity": 1.0
+        },
+        {
+          "channel": "SteeringWheelAngle",
+          "signed_mean": -7.53,
+          "abs_mean": 8.77,
+          "unit": "°",
+          "direction": "over",
+          "severity": 0.015
+        },
+        {
+          "channel": "Throttle",
+          "signed_mean": 1.97,
+          "abs_mean": 6.71,
+          "unit": "%",
+          "direction": "under",
+          "severity": 0.011
+        },
+        {
+          "channel": "Brake",
+          "signed_mean": 0.34,
+          "abs_mean": 6.05,
+          "unit": "%",
+          "direction": "under",
+          "severity": 0.01
+        },
+        {
+          "channel": "Speed",
+          "signed_mean": -0.22,
+          "abs_mean": 3.15,
+          "unit": "km/h",
+          "direction": "over",
+          "severity": 0.005
+        },
+        {
+          "channel": "YawRate",
+          "signed_mean": -0.59,
+          "abs_mean": 3.24,
+          "unit": "°/s",
+          "direction": "over",
+          "severity": 0.005
+        },
+        {
+          "channel": "Gear",
+          "signed_mean": -0.4,
+          "abs_mean": 0.4,
+          "unit": "",
+          "direction": "over",
+          "severity": 0.001
+        },
+        {
+          "channel": "LatAccel",
+          "signed_mean": -0.02,
+          "abs_mean": 0.14,
+          "unit": "g",
+          "direction": "over",
+          "severity": 0.0
+        },
+        {
+          "channel": "LongAccel",
+          "signed_mean": 0.01,
+          "abs_mean": 0.18,
+          "unit": "g",
+          "direction": "under",
+          "severity": 0.0
+        }
+      ],
+      "causal_chains": [
+        {
+          "cause_channel": "Brake",
+          "cause_direction": "under",
+          "effect_channel": "Speed",
+          "effect_direction": "over",
+          "confidence": 0.5,
+          "description": "Insufficient braking leads to excess speed at the apex"
+        },
+        {
+          "cause_channel": "Speed",
+          "cause_direction": "over",
+          "effect_channel": "LatAccel",
+          "effect_direction": "over",
+          "confidence": 0.4,
+          "description": "Excess apex speed causes understeer (high lateral load)"
+        },
+        {
+          "cause_channel": "Throttle",
+          "cause_direction": "under",
+          "effect_channel": "Speed",
+          "effect_direction": "under",
+          "confidence": 0.16,
+          "description": "Late throttle application compromises corner exit speed"
+        }
+      ],
+      "template_feedback": "━━━ Zone 2 (33.3% – 36.3% of lap) ━━━\n  Severity: ██████████ (100%)\n  Estimated time impact: ~0.056s\n\n  Key deviations:\n    ▼ RPM: Engine RPM is lower than expected — check your gear selection\n      Deviation: 601.9 rpm below expert level\n\n  Root cause analysis:\n    → Insufficient braking leads to excess speed at the apex (confidence: 50%)\n    💡 Tip: Try initiating your braking earlier and with more initial pressure to scrub speed before the turn-in point.\n    → Excess apex speed causes understeer (high lateral load) (confidence: 40%)\n    💡 Tip: The excess entry speed is overloading the front tyres. Carry less speed in to maintain grip.\n",
+      "llm_feedback": "You're carrying excess speed into the apex, which is likely due to insufficient braking. To improve, try braking 0.3% harder to match the expert's brake input, and aim to be closer to the expert's RPM, currently 601.9 rpm higher than yours. By doing so, you should be able to reduce understeer and improve your corner exit speed. Focus on getting on the throttle 2.0% earlier to take advantage of the corrected apex speed and maintain a competitive corner exit."
+    },
+    {
+      "zone_id": 3,
+      "lap_pct_start": 47.35,
+      "lap_pct_end": 50.85,
+      "idx_start": 473,
+      "idx_end": 508,
+      "severity_score": 1.0,
+      "dominant_channels": [
+        {
+          "channel": "RPM",
+          "signed_mean": 591.2,
+          "abs_mean": 705.28,
+          "unit": "rpm",
+          "direction": "under",
+          "severity": 1.0
+        },
+        {
+          "channel": "Throttle",
+          "signed_mean": 31.89,
+          "abs_mean": 33.74,
+          "unit": "%",
+          "direction": "under",
+          "severity": 0.048
+        },
+        {
+          "channel": "Speed",
+          "signed_mean": 12.62,
+          "abs_mean": 17.57,
+          "unit": "km/h",
+          "direction": "under",
+          "severity": 0.025
+        },
+        {
+          "channel": "SteeringWheelAngle",
+          "signed_mean": -8.29,
+          "abs_mean": 11.03,
+          "unit": "°",
+          "direction": "over",
+          "severity": 0.016
+        },
+        {
+          "channel": "Brake",
+          "signed_mean": -4.11,
+          "abs_mean": 5.16,
+          "unit": "%",
+          "direction": "over",
+          "severity": 0.007
+        },
+        {
+          "channel": "YawRate",
+          "signed_mean": 1.42,
+          "abs_mean": 4.92,
+          "unit": "°/s",
+          "direction": "under",
+          "severity": 0.007
+        },
+        {
+          "channel": "Gear",
+          "signed_mean": -0.03,
+          "abs_mean": 0.05,
+          "unit": "",
+          "direction": "over",
+          "severity": 0.0
+        },
+        {
+          "channel": "LatAccel",
+          "signed_mean": 0.14,
+          "abs_mean": 0.26,
+          "unit": "g",
+          "direction": "under",
+          "severity": 0.0
+        },
+        {
+          "channel": "LongAccel",
+          "signed_mean": 0.23,
+          "abs_mean": 0.33,
+          "unit": "g",
+          "direction": "under",
+          "severity": 0.0
+        }
+      ],
+      "causal_chains": [
+        {
+          "cause_channel": "SteeringWheelAngle",
+          "cause_direction": "over",
+          "effect_channel": "Speed",
+          "effect_direction": "under",
+          "confidence": 1.0,
+          "description": "Excessive steering input scrubs speed through the corner"
+        },
+        {
+          "cause_channel": "Throttle",
+          "cause_direction": "over",
+          "effect_channel": "YawRate",
+          "effect_direction": "under",
+          "confidence": 0.03,
+          "description": "Aggressive throttle application causes rear instability"
+        }
+      ],
+      "template_feedback": "━━━ Zone 3 (47.3% – 50.9% of lap) ━━━\n  Severity: ██████████ (100%)\n  Estimated time impact: ~0.363s\n\n  Key deviations:\n    ▼ RPM: Engine RPM is lower than expected — check your gear selection\n      Deviation: 591.2 rpm below expert level\n\n  Root cause analysis:\n    → Excessive steering input scrubs speed through the corner (confidence: 100%)\n    💡 Tip: Reduce steering angle — a straighter wheel lets the car roll faster. Work on your turn-in point.\n    → Aggressive throttle application causes rear instability (confidence: 3%)\n    💡 Tip: Your aggressive throttle is pushing the car wide. Be smoother on application.\n",
+      "llm_feedback": "You're carrying 12.6 km/h more speed than optimal through this segment, which is a great start, but you're also using 8.3° more steering wheel angle than the expert, which is costing you pace. To improve, try reducing your steering input to match the expert's line, focusing on a smoother turn-in and apex. Additionally, you're 591.2 rpm below the expert's engine speed, so try to be more aggressive with your throttle application, but avoid overdoing it, as you're already close to the expert's throttle usage, being only 31.9% below."
+    },
+    {
+      "zone_id": 4,
+      "lap_pct_start": 53.65,
+      "lap_pct_end": 57.86,
+      "idx_start": 536,
+      "idx_end": 578,
+      "severity_score": 1.0,
+      "dominant_channels": [
+        {
+          "channel": "RPM",
+          "signed_mean": 804.68,
+          "abs_mean": 804.68,
+          "unit": "rpm",
+          "direction": "under",
+          "severity": 1.0
+        },
+        {
+          "channel": "Throttle",
+          "signed_mean": -11.05,
+          "abs_mean": 28.01,
+          "unit": "%",
+          "direction": "over",
+          "severity": 0.035
+        },
+        {
+          "channel": "Brake",
+          "signed_mean": -1.92,
+          "abs_mean": 16.89,
+          "unit": "%",
+          "direction": "over",
+          "severity": 0.021
+        },
+        {
+          "channel": "Speed",
+          "signed_mean": 15.21,
+          "abs_mean": 15.21,
+          "unit": "km/h",
+          "direction": "under",
+          "severity": 0.019
+        },
+        {
+          "channel": "SteeringWheelAngle",
+          "signed_mean": 1.76,
+          "abs_mean": 6.71,
+          "unit": "°",
+          "direction": "under",
+          "severity": 0.008
+        },
+        {
+          "channel": "YawRate",
+          "signed_mean": -2.52,
+          "abs_mean": 4.23,
+          "unit": "°/s",
+          "direction": "over",
+          "severity": 0.005
+        },
+        {
+          "channel": "LongAccel",
+          "signed_mean": -0.05,
+          "abs_mean": 0.49,
+          "unit": "g",
+          "direction": "over",
+          "severity": 0.001
+        },
+        {
+          "channel": "Gear",
+          "signed_mean": -0.23,
+          "abs_mean": 0.34,
+          "unit": "",
+          "direction": "over",
+          "severity": 0.0
+        },
+        {
+          "channel": "LatAccel",
+          "signed_mean": -0.3,
+          "abs_mean": 0.4,
+          "unit": "g",
+          "direction": "over",
+          "severity": 0.0
+        }
+      ],
+      "causal_chains": [
+        {
+          "cause_channel": "Brake",
+          "cause_direction": "over",
+          "effect_channel": "Speed",
+          "effect_direction": "under",
+          "confidence": 1.0,
+          "description": "Braking too early causes low apex speed"
+        },
+        {
+          "cause_channel": "Speed",
+          "cause_direction": "under",
+          "effect_channel": "Throttle",
+          "effect_direction": "over",
+          "confidence": 0.7,
+          "description": "Low apex speed leads to premature throttle application"
+        },
+        {
+          "cause_channel": "Throttle",
+          "cause_direction": "over",
+          "effect_channel": "YawRate",
+          "effect_direction": "over",
+          "confidence": 0.11,
+          "description": "Aggressive throttle application causes rear instability"
+        }
+      ],
+      "template_feedback": "━━━ Zone 4 (53.7% – 57.9% of lap) ━━━\n  Severity: ██████████ (100%)\n  Estimated time impact: ~0.376s\n\n  Key deviations:\n    ▼ RPM: Engine RPM is lower than expected — check your gear selection\n      Deviation: 804.7 rpm below expert level\n\n  Root cause analysis:\n    → Braking too early causes low apex speed (confidence: 100%)\n    💡 Tip: You can brake later and carry more speed into the corner — trust the car's braking capability.\n    → Low apex speed leads to premature throttle application (confidence: 70%)\n    💡 Tip: Low mid-corner speed is tempting you to get on throttle early. Focus on carrying more apex speed instead.\n",
+      "llm_feedback": "You're carrying 15.2 km/h more speed than the expert through this segment, which is a great starting point. However, you're braking 1.9% more than the expert, which is likely causing you to lose momentum. To improve, try braking later and shallower, aiming to be closer to the expert's brake point. This should help you maintain a better apex speed, and as a result, you'll be able to apply the throttle more smoothly, reducing the need for premature acceleration."
+    },
+    {
+      "zone_id": 5,
+      "lap_pct_start": 82.08,
+      "lap_pct_end": 83.08,
+      "idx_start": 820,
+      "idx_end": 830,
+      "severity_score": 1.0,
+      "dominant_channels": [
+        {
+          "channel": "RPM",
+          "signed_mean": 613.63,
+          "abs_mean": 613.63,
+          "unit": "rpm",
+          "direction": "under",
+          "severity": 1.0
+        },
+        {
+          "channel": "Speed",
+          "signed_mean": 12.54,
+          "abs_mean": 12.54,
+          "unit": "km/h",
+          "direction": "under",
+          "severity": 0.02
+        },
+        {
+          "channel": "Brake",
+          "signed_mean": 5.3,
+          "abs_mean": 12.34,
+          "unit": "%",
+          "direction": "under",
+          "severity": 0.02
+        },
+        {
+          "channel": "Throttle",
+          "signed_mean": 0.93,
+          "abs_mean": 2.85,
+          "unit": "%",
+          "direction": "under",
+          "severity": 0.005
+        },
+        {
+          "channel": "YawRate",
+          "signed_mean": 1.47,
+          "abs_mean": 2.9,
+          "unit": "°/s",
+          "direction": "under",
+          "severity": 0.005
+        },
+        {
+          "channel": "SteeringWheelAngle",
+          "signed_mean": 2.02,
+          "abs_mean": 2.09,
+          "unit": "°",
+          "direction": "under",
+          "severity": 0.003
+        },
+        {
+          "channel": "Gear",
+          "signed_mean": -0.28,
+          "abs_mean": 0.43,
+          "unit": "",
+          "direction": "over",
+          "severity": 0.001
+        },
+        {
+          "channel": "LatAccel",
+          "signed_mean": 0.07,
+          "abs_mean": 0.14,
+          "unit": "g",
+          "direction": "under",
+          "severity": 0.0
+        },
+        {
+          "channel": "LongAccel",
+          "signed_mean": -0.17,
+          "abs_mean": 0.25,
+          "unit": "g",
+          "direction": "over",
+          "severity": 0.0
+        }
+      ],
+      "causal_chains": [
+        {
+          "cause_channel": "Brake",
+          "cause_direction": "over",
+          "effect_channel": "Speed",
+          "effect_direction": "under",
+          "confidence": 1.0,
+          "description": "Braking too early causes low apex speed"
+        },
+        {
+          "cause_channel": "Throttle",
+          "cause_direction": "under",
+          "effect_channel": "Speed",
+          "effect_direction": "under",
+          "confidence": 1.0,
+          "description": "Late throttle application compromises corner exit speed"
+        },
+        {
+          "cause_channel": "Speed",
+          "cause_direction": "under",
+          "effect_channel": "Throttle",
+          "effect_direction": "over",
+          "confidence": 0.7,
+          "description": "Low apex speed leads to premature throttle application"
+        }
+      ],
+      "template_feedback": "━━━ Zone 5 (82.1% – 83.1% of lap) ━━━\n  Severity: ██████████ (100%)\n  Estimated time impact: ~0.079s\n\n  Key deviations:\n    ▼ RPM: Engine RPM is lower than expected — check your gear selection\n      Deviation: 613.6 rpm below expert level\n\n  Root cause analysis:\n    → Braking too early causes low apex speed (confidence: 100%)\n    💡 Tip: You can brake later and carry more speed into the corner — trust the car's braking capability.\n    → Late throttle application compromises corner exit speed (confidence: 100%)\n    💡 Tip: Get on the throttle earlier and more decisively on corner exit to maximise straight-line speed.\n",
+      "llm_feedback": "You're carrying 12.5 km/h more speed than the expert through this segment, which is a great starting point. However, you're braking 5.3% more than the expert, which is causing you to lose apex speed. To improve, try braking later and reducing your brake input by 5.3% to allow yourself to carry more speed through the turn. Additionally, focus on applying the throttle 0.9% sooner to take advantage of the extra speed you're carrying and optimize your corner exit."
+    }
+  ],
+  "summary_template": "═══════════════════════════════════════════════════\n           COACHING REPORT SUMMARY\n═══════════════════════════════════════════════════\n  Zones analysed: 5\n  Overall severity: 100%\n  Total estimated time impact: ~1.027s\n\n  🎯 Priority focus: Zone 1 (10.5%-16.8%)\n     Main issue: RPM (insufficient) — 734.3 rpm off expert level\n     Root cause: Late throttle application compromises corner exit speed\n\n═══════════════════════════════════════════════════",
+  "summary_llm": "The largest area for improvement lies in optimizing corner exit speeds, with Zone 1 showing a significant loss due to late throttle application, resulting in 734.3 rpm under the ideal RPM. To address this, focus on applying throttle earlier in the next lap, aiming to reduce the RPM deficit in Zone 1. Despite the estimated total time loss of ~1.027s, it's encouraging to see that the issues identified are related to specific driving techniques, which can be refined with practice. By making these adjustments, you can work towards bridging the gap and improving your overall lap time."
+}

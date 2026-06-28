@@ -2,8 +2,8 @@
 Train the LSTM Autoencoder on expert lap telemetry
  
 Architecture: sequence-to-sequence LSTM Autoencoder
-    Encoder: LSTM(input=10, hidden=64, layers=1) → latent vector (16,)
-    Decoder: LSTM(input=16, hidden=64, layers=1) → reconstructed sequence (1000, 10)
+    Encoder: LSTM(input=9, hidden=256, layers=2) → latent vector (32,)
+    Decoder: LSTM(input=32, hidden=256, layers=2) → reconstructed sequence (1000, 9)
  
 Outputs (inside models/):
     - autoencoder_best.pt       Best checkpoint (lowest val loss)
@@ -324,10 +324,10 @@ def main():
     print(f"Loaded {len(train_telemetry)} laps | Features ({len(FEATURE_COLS)}): {FEATURE_COLS}")
 
     # --- Cross-validation ---
-    run_cross_validation(train_telemetry, device, k=5)
+    #run_cross_validation(train_telemetry, device, k=5)
 
     # --- Train final model ---
-    #train_final_model(train_telemetry, device)
+    train_final_model(train_telemetry, device)
 
 
 if __name__ == "__main__":

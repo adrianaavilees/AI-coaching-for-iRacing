@@ -16,22 +16,22 @@ The system has three layers of feedback:
 |---|---|---|
 | 1 | Statistical (deterministic) | Zones, severity scores, causal chains |
 | 2 | Template rendering (deterministic fallback) | Structured coaching text |
-| 3 | LLM via Groq / Gemini (optional) | Polished natural-language coaching |
+| 3 | LLM via Groq | Polished natural-language coaching |
 
 ---
 
 ## Features
 
-- **Automated data collection** — downloads laps from Garage61 using Playwright (browser automation + HTTP interception)
-- **LSTM Autoencoder** — trained on expert telemetry; reconstruction error = deviation from expert driving style
-- **Zone detection** — segments the lap into problem zones ranked by severity (0–1 score)
-- **Causal chain analysis** — detects cause → effect relationships between channels (e.g. late brake → low speed → understeer)
-- **Progressive Streamlit UI** — 3-phase pipeline renders results as they arrive without blocking:
+- **Automated data collection**: downloads laps from Garage61 using Playwright (browser automation + HTTP interception)
+- **LSTM Autoencoder**: trained on expert telemetry; reconstruction error = deviation from expert driving style
+- **Zone detection**: segments the lap into problem zones ranked by severity (0–1 score)
+- **Causal chain analysis**: detects cause → effect relationships between channels (e.g. late brake → low speed → understeer)
+- **Progressive Streamlit UI**: 3-phase pipeline renders results as they arrive without blocking:
   - Phase 1 (instant): metadata, raw telemetry
   - Phase 2 (~2–5 s): anomaly heatmap, telemetry overlays, track map
   - Phase 3 (background): LLM coaching cards
-- **Track map** — circuit geometry from GPS lat/lon, with coloured zone markers
-- **Multi-page app** — Session Overview, Telemetry Analysis, Session Report, Advanced
+- **Track map**: circuit geometry from GPS lat/lon, with coloured zone markers
+- **Multi-page app**: Session Overview, Telemetry Analysis, Session Report, Advanced
 
 ---
 
@@ -69,24 +69,29 @@ The system has three layers of feedback:
 │       ├── session_report.py   # Page 3: full coaching report
 │       └── advanced.py         # Page 4: raw data, model diagnostics
 │
-├── coach_pilot.py              # CLI: run full coaching pipeline for a pilot folder
-├── config.py                   # Centralised hyperparameters and paths
-├── create_final_dataset.py     # CSV parsing, interpolation → normalised matrices
-├── train_autoencoder.py        # LSTM Autoencoder training with k-fold CV
-├── evaluate_autoencoder.py     # Reconstruction and MSE evaluation
-├── optimize_hyperparams.py     # Optuna hyperparameter search
-├── feedback_engine.py          # 3-layer feedback (stats → template → LLM)
-├── statistical_analysis.py     # Zone detection, causal chains, severity scoring
-├── template_feedback_fallback.py # Deterministic template-based coaching text
-├── interpolation.py            # LapDistPct-based resampling to N_POINTS
-├── garage61_downloader.py      # Playwright scraper for Garage61.net
-├── add_extra_data.py           # Merge extra metadata into training set
-├── export_mse_csv.py           # Export MSE scores to CSV for analysis
+├── src/                        # Core library modules
+│   ├── coaching/               # Feedback generation
+│   │   ├── coach_pilot.py      # CLI: run full coaching pipeline for a pilot folder
+│   │   ├── feedback_engine.py  # 3-layer feedback (stats → template → LLM)
+│   │   ├── statistical_analysis.py  # Zone detection, causal chains, severity scoring
+│   │   └── template_feedback_fallback.py  # Deterministic template-based coaching text
+│   ├── data/                   # Data ingestion and processing
+│   │   ├── add_extra_data.py   # Merge extra metadata into training set
+│   │   ├── create_final_dataset.py  # CSV parsing, interpolation → normalised matrices
+│   │   ├── garage61_downloader.py   # Playwright scraper for Garage61.net
+│   │   └── interpolation.py    # LapDistPct-based resampling to N_POINTS
+│   ├── model/                  # Model training and evaluation
+│   │   ├── train_autoencoder.py     # LSTM Autoencoder training
+│   │   ├── evaluate_autoencoder.py  # Reconstruction and MSE evaluation
+│   │   └── optimize_hyperparams.py  # Optuna hyperparameter search
+│   └── utils/                  # Shared utilities
+│       ├── config.py           # Centralised hyperparameters and paths
+│       └── plot_roc_presentation.py  # ROC curve plotting for presentations
 │
 ├── data/
 │   ├── garage61_csvs/          # Raw downloaded CSVs from Garage61
 │   ├── processed/              # Interpolated, normalised NumPy arrays
-│   └── Ferrari 296 GT3/        # Car-specific extra data
+│   └── test dani/              # Testing data for real case
 │
 ├── models/
 │   ├── autoencoder_best.pt     # Trained model checkpoint
@@ -106,14 +111,13 @@ The system has three layers of feedback:
 
 - Python 3.10+
 - A [Garage61.net](https://garage61.net) account (for downloading laps)
-- A [Groq](https://console.groq.com) API key (optional — for LLM coaching)
+- A [Groq](https://console.groq.com) API key
 
 ### 2. Install dependencies
 
 ```bash
 python -m venv venv
 venv\Scripts\activate          # Windows
-# source venv/bin/activate     # Linux / macOS
 
 pip install -r requirements.txt
 playwright install chromium
@@ -125,7 +129,7 @@ Create a `.env` file in the project root:
 
 ```env
 GROQ_API_KEY=your_groq_api_key_here
-# GOOGLE_API_KEY=your_google_api_key_here   # optional, for Gemini
+# GEMINI_API_KEY=your_google_api_key_here   # optional, for Gemini
 ```
 
 ---
@@ -163,7 +167,7 @@ Configure `TRACK_ID` and `CAR_ID` at the top of `garage61_downloader.py`.
 python train_autoencoder.py
 ```
 
-Trains a sequence-to-sequence LSTM Autoencoder on all processed expert laps with 5-fold cross-validation. Saves `autoencoder_best.pt` and `scaler_params.npz` to `models/`.
+Trains a sequence-to-sequence LSTM Autoencoder on all processed expert laps. Saves `autoencoder_best.pt` and `scaler_params.npz` to `models/`.
 
 Key hyperparameters (in `config.py`):
 
@@ -219,13 +223,13 @@ Reconstruction error (MSE per point) reveals where the uploaded lap deviates fro
 
 ## Coaching Zone Pipeline
 
-1. **Compute signed error** — `recon - original` in physical units for each channel
-2. **Detect zones** — contiguous segments above the MSE threshold
-3. **Analyse channels** — rank channels by deviation within each zone
-4. **Detect causal chains** — identify temporal cause → effect relationships (e.g. early throttle → understeer → wide exit)
-5. **Score severity** — weighted 0–1 score per zone
-6. **Estimate time loss** — approximated from speed deviation integral
-7. **Generate feedback** — template text first, then enriched by LLM if available
+1. **Compute signed error**: `recon - original` in physical units for each channel
+2. **Detect zones**: contiguous segments above the MSE threshold
+3. **Analyse channels**: rank channels by deviation within each zone
+4. **Detect causal chains**: identify temporal cause → effect relationships (e.g. early throttle → understeer → wide exit)
+5. **Score severity**: weighted 0–1 score per zone
+6. **Estimate time loss**: approximated from speed deviation integral
+7. **Generate feedback**: template text first, then enriched by LLM if available
 
 ---
 
@@ -272,6 +276,6 @@ Streamlit pages            # Progressive rendering
 ## Current Scope
 
 - **Car:** Ferrari 296 GT3
-- **Tracks:** Autodromo di Imola (GP), Miami
+- **Tracks:** Autodromo di Imola
 - **Data source:** [Garage61.net](https://garage61.net) public lap library
 - **LLM providers:** Groq (default), Google Gemini (optional)

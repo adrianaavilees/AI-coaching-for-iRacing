@@ -18,10 +18,10 @@ Pipeline:
 Outputs (inside data/processed/):
     - train_metadata.csv        Expert-lap metadata
     - test_metadata.csv         Amateur-lap metadata
-    - train_telemetry.npy       (n_laps_train, N_POINTS, n_features) → (18, 1000, 10)
-    - test_telemetry.npy        (n_laps_test,  N_POINTS, n_features) → (21, 1000, 10)
-    - train_latlon.npy          (n_laps_train, N_POINTS, 2) → (18, 1000, 2)
-    - test_latlon.npy           (n_laps_test,  N_POINTS, 2) → (21, 1000, 2)
+    - train_telemetry.npy       (n_laps_train, N_POINTS, n_features) 
+    - test_telemetry.npy        (n_laps_test,  N_POINTS, n_features)
+    - train_latlon.npy          (n_laps_train, N_POINTS, 2) 
+    - test_latlon.npy           (n_laps_test,  N_POINTS, 2) 
     - filtering_report.txt      
 """
 

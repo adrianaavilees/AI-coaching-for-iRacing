@@ -31,7 +31,7 @@ from model.train_autoencoder import (
 
 # ----------------------------- Settings -------------------------------- #
 N_TRIALS        = 50       # Smaller number for faster search
-SEARCH_FOLDS    = 2        # 2 folds for search (fast); final train uses 5-fold
+SEARCH_FOLDS    = 2        # Folds for search (fast)
 FINAL_FOLDS     = 5        # Folds used for final evaluation
 SEARCH_EPOCHS   = 60       # Enough to rank HPs; final train uses full 300
 SEARCH_PATIENCE  = 15      # Fast early stopping during search

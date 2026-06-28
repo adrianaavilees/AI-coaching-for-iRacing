@@ -1,0 +1,2117 @@
+{
+    "global_metrics_normalized": {
+        "expert": {
+            "mse": 0.17618459463119507,
+            "mse_std": 0.021748363971710205,
+            "rmse": 0.41974347829818726,
+            "mae": 0.21083904802799225,
+            "n_laps": 149
+        },
+        "amateur": {
+            "mse": 0.202623188495636,
+            "mse_std": 0.03004937618970871,
+            "rmse": 0.45013687014579773,
+            "mae": 0.23228521645069122,
+            "n_laps": 178
+        }
+    },
+    "global_metrics_denormalized": {
+        "expert": {
+            "mse": 12051.9765625,
+            "mse_std": 4380.31982421875,
+            "rmse": 109.781494140625,
+            "mae": 22.991865158081055
+        },
+        "amateur": {
+            "mse": 16891.421875,
+            "mse_std": 6134.05078125,
+            "rmse": 129.96701049804688,
+            "mae": 27.30390167236328
+        }
+    },
+    "per_channel_metrics": {
+        "Speed": {
+            "expert_mse": 0.006423889193683863,
+            "expert_std": 0.0019654077477753162,
+            "amateur_mse": 0.014051037840545177,
+            "amateur_std": 0.003910968545824289,
+            "ratio": 2.187310218811035
+        },
+        "Throttle": {
+            "expert_mse": 0.07784663885831833,
+            "expert_std": 0.03519699349999428,
+            "amateur_mse": 0.0915490910410881,
+            "amateur_std": 0.040193986147642136,
+            "ratio": 1.1760185956954956
+        },
+        "Brake": {
+            "expert_mse": 0.09510133415460587,
+            "expert_std": 0.04040515795350075,
+            "amateur_mse": 0.15193788707256317,
+            "amateur_std": 0.0707998126745224,
+            "ratio": 1.5976420640945435
+        },
+        "RPM": {
+            "expert_mse": 0.3161100149154663,
+            "expert_std": 0.11490114033222198,
+            "amateur_mse": 0.4430484473705292,
+            "amateur_std": 0.1609041392803192,
+            "ratio": 1.401564121246338
+        },
+        "SteeringWheelAngle": {
+            "expert_mse": 0.08738813549280167,
+            "expert_std": 0.03318842872977257,
+            "amateur_mse": 0.12211689352989197,
+            "amateur_std": 0.054625168442726135,
+            "ratio": 1.397408127784729
+        },
+        "Gear": {
+            "expert_mse": 0.14597280323505402,
+            "expert_std": 0.03972078859806061,
+            "amateur_mse": 0.1812177449464798,
+            "amateur_std": 0.05664440244436264,
+            "ratio": 1.2414486408233643
+        },
+        "LatAccel": {
+            "expert_mse": 0.06949394941329956,
+            "expert_std": 0.010009361431002617,
+            "amateur_mse": 0.0762990415096283,
+            "amateur_std": 0.014424940571188927,
+            "ratio": 1.0979235172271729
+        },
+        "LongAccel": {
+            "expert_mse": 0.07203152030706406,
+            "expert_std": 0.022160805761814117,
+            "amateur_mse": 0.10513845831155777,
+            "amateur_std": 0.032782137393951416,
+            "ratio": 1.4596173763275146
+        },
+        "VertAccel": {
+            "expert_mse": 0.8052676320075989,
+            "expert_std": 0.11192137002944946,
+            "amateur_mse": 0.7497659921646118,
+            "amateur_std": 0.14129163324832916,
+            "ratio": 0.9310767650604248
+        },
+        "YawRate": {
+            "expert_mse": 0.08620999753475189,
+            "expert_std": 0.013846764340996742,
+            "amateur_mse": 0.09110746532678604,
+            "amateur_std": 0.017986314371228218,
+            "ratio": 1.056808590888977
+        }
+    },
+    "per_group_metrics": {
+        "Driver Inputs": {
+            "expert_mse": 0.10157722234725952,
+            "expert_std": 0.02006148174405098,
+            "amateur_mse": 0.1367054134607315,
+            "amateur_std": 0.03162361681461334,
+            "ratio": 1.3458274602890015,
+            "channels": [
+                "Throttle",
+                "Brake",
+                "SteeringWheelAngle",
+                "Gear"
+            ]
+        },
+        "Vehicle Dynamics": {
+            "expert_mse": 0.22592280805110931,
+            "expert_std": 0.029094865545630455,
+            "amateur_mse": 0.24656839668750763,
+            "amateur_std": 0.037725694477558136,
+            "ratio": 1.0913833379745483,
+            "channels": [
+                "Speed",
+                "RPM",
+                "LatAccel",
+                "LongAccel",
+                "VertAccel",
+                "YawRate"
+            ]
+        }
+    },
+    "per_lap_expert": [
+        {
+            "driver": "Kieran Potter",
+            "lap_time_str": "01:39.611",
+            "mse_norm": 0.17727448046207428,
+            "mse_denorm": 9123.8076171875
+        },
+        {
+            "driver": "Jaume Calabuig",
+            "lap_time_str": "01:39.956",
+            "mse_norm": 0.17792904376983643,
+            "mse_denorm": 12443.8671875
+        },
+        {
+            "driver": "Alexander Pushkin",
+            "lap_time_str": "01:40.104",
+            "mse_norm": 0.18609455227851868,
+            "mse_denorm": 12558.37890625
+        },
+        {
+            "driver": "Daniel Wieland2",
+            "lap_time_str": "01:40.124",
+            "mse_norm": 0.1838424652814865,
+            "mse_denorm": 12884.8427734375
+        },
+        {
+            "driver": "Tom Euler",
+            "lap_time_str": "01:40.175",
+            "mse_norm": 0.19054119288921356,
+            "mse_denorm": 9220.9404296875
+        },
+        {
+            "driver": "Nikko De Bellis2",
+            "lap_time_str": "01:40.276",
+            "mse_norm": 0.20676113665103912,
+            "mse_denorm": 10160.796875
+        },
+        {
+            "driver": "Kwon Junhu",
+            "lap_time_str": "01:40.288",
+            "mse_norm": 0.1537913829088211,
+            "mse_denorm": 12963.5185546875
+        },
+        {
+            "driver": "Vincent Lodder",
+            "lap_time_str": "01:40.299",
+            "mse_norm": 0.17089305818080902,
+            "mse_denorm": 9561.763671875
+        },
+        {
+            "driver": "Bjoern Anschlag",
+            "lap_time_str": "01:40.326",
+            "mse_norm": 0.19878488779067993,
+            "mse_denorm": 12864.3427734375
+        },
+        {
+            "driver": "Alexander Paulick",
+            "lap_time_str": "01:40.332",
+            "mse_norm": 0.15602049231529236,
+            "mse_denorm": 10433.501953125
+        },
+        {
+            "driver": "Aston Egelmeers",
+            "lap_time_str": "01:40.393",
+            "mse_norm": 0.14824837446212769,
+            "mse_denorm": 9368.55078125
+        },
+        {
+            "driver": "Mark Foley",
+            "lap_time_str": "01:40.407",
+            "mse_norm": 0.18840759992599487,
+            "mse_denorm": 14358.666015625
+        },
+        {
+            "driver": "Kobe Marshall",
+            "lap_time_str": "01:40.432",
+            "mse_norm": 0.22507567703723907,
+            "mse_denorm": 23582.859375
+        },
+        {
+            "driver": "Mark De Vries5",
+            "lap_time_str": "01:40.459",
+            "mse_norm": 0.1871488094329834,
+            "mse_denorm": 13784.9248046875
+        },
+        {
+            "driver": "Michael Vlasak2",
+            "lap_time_str": "01:40.480",
+            "mse_norm": 0.1808435171842575,
+            "mse_denorm": 16045.8046875
+        },
+        {
+            "driver": "Ruslan Aliev2",
+            "lap_time_str": "01:40.498",
+            "mse_norm": 0.17331701517105103,
+            "mse_denorm": 9305.6591796875
+        },
+        {
+            "driver": "Steven Singer",
+            "lap_time_str": "01:40.522",
+            "mse_norm": 0.15438079833984375,
+            "mse_denorm": 9888.556640625
+        },
+        {
+            "driver": "Masin Sandlin",
+            "lap_time_str": "01:40.523",
+            "mse_norm": 0.1625068634748459,
+            "mse_denorm": 9238.7001953125
+        },
+        {
+            "driver": "Fotis Katechos2",
+            "lap_time_str": "01:40.527",
+            "mse_norm": 0.16269628703594208,
+            "mse_denorm": 10852.39453125
+        },
+        {
+            "driver": "Stefan Jones",
+            "lap_time_str": "01:40.582",
+            "mse_norm": 0.15462402999401093,
+            "mse_denorm": 9849.43359375
+        },
+        {
+            "driver": "Thinus Venter",
+            "lap_time_str": "01:40.597",
+            "mse_norm": 0.18194977939128876,
+            "mse_denorm": 13906.265625
+        },
+        {
+            "driver": "Davide Macchiusi",
+            "lap_time_str": "01:40.601",
+            "mse_norm": 0.16787883639335632,
+            "mse_denorm": 10135.1201171875
+        },
+        {
+            "driver": "Giuseppe Runza",
+            "lap_time_str": "01:40.610",
+            "mse_norm": 0.15874990820884705,
+            "mse_denorm": 11581.34765625
+        },
+        {
+            "driver": "Rapha\u00ebl Bourgoin",
+            "lap_time_str": "01:40.617",
+            "mse_norm": 0.19359184801578522,
+            "mse_denorm": 13502.5869140625
+        },
+        {
+            "driver": "Jack Whyborn",
+            "lap_time_str": "01:40.633",
+            "mse_norm": 0.16180898249149323,
+            "mse_denorm": 10654.18359375
+        },
+        {
+            "driver": "Alessio Brogi",
+            "lap_time_str": "01:40.635",
+            "mse_norm": 0.16566869616508484,
+            "mse_denorm": 10804.3330078125
+        },
+        {
+            "driver": "Dan Carpenter2",
+            "lap_time_str": "01:40.643",
+            "mse_norm": 0.18991632759571075,
+            "mse_denorm": 18874.671875
+        },
+        {
+            "driver": "Feddo Koeman",
+            "lap_time_str": "01:40.657",
+            "mse_norm": 0.15215246379375458,
+            "mse_denorm": 8849.6884765625
+        },
+        {
+            "driver": "Archie Hazell",
+            "lap_time_str": "01:40.657",
+            "mse_norm": 0.18611356616020203,
+            "mse_denorm": 11901.7470703125
+        },
+        {
+            "driver": "Gabriele Rizzo2",
+            "lap_time_str": "01:40.686",
+            "mse_norm": 0.16313102841377258,
+            "mse_denorm": 10379.900390625
+        },
+        {
+            "driver": "Elliot Stanley",
+            "lap_time_str": "01:40.692",
+            "mse_norm": 0.20592860877513885,
+            "mse_denorm": 16514.86328125
+        },
+        {
+            "driver": "Denis Duarte",
+            "lap_time_str": "01:40.695",
+            "mse_norm": 0.18779893219470978,
+            "mse_denorm": 10036.4716796875
+        },
+        {
+            "driver": "Johan Pronk",
+            "lap_time_str": "01:40.697",
+            "mse_norm": 0.16135424375534058,
+            "mse_denorm": 9341.345703125
+        },
+        {
+            "driver": "Joel Catal\u00e1n Ferruz",
+            "lap_time_str": "01:40.711",
+            "mse_norm": 0.1794346123933792,
+            "mse_denorm": 10906.8583984375
+        },
+        {
+            "driver": "Jakob Zeisler",
+            "lap_time_str": "01:40.719",
+            "mse_norm": 0.14224189519882202,
+            "mse_denorm": 7609.51220703125
+        },
+        {
+            "driver": "Lars Mulder",
+            "lap_time_str": "01:40.750",
+            "mse_norm": 0.16451813280582428,
+            "mse_denorm": 8831.5419921875
+        },
+        {
+            "driver": "Nuno E Gomes",
+            "lap_time_str": "01:40.753",
+            "mse_norm": 0.17730368673801422,
+            "mse_denorm": 16920.330078125
+        },
+        {
+            "driver": "Kacper Amanowski",
+            "lap_time_str": "01:40.761",
+            "mse_norm": 0.17271754145622253,
+            "mse_denorm": 12523.1884765625
+        },
+        {
+            "driver": "Joshua Wilk",
+            "lap_time_str": "01:40.768",
+            "mse_norm": 0.1600574105978012,
+            "mse_denorm": 11363.259765625
+        },
+        {
+            "driver": "Mikhail Lapuka2",
+            "lap_time_str": "01:40.770",
+            "mse_norm": 0.18778476119041443,
+            "mse_denorm": 12607.2705078125
+        },
+        {
+            "driver": "Denis Malyshin",
+            "lap_time_str": "01:40.796",
+            "mse_norm": 0.13614264130592346,
+            "mse_denorm": 10551.9521484375
+        },
+        {
+            "driver": "Matthis Boucher",
+            "lap_time_str": "01:40.798",
+            "mse_norm": 0.18269875645637512,
+            "mse_denorm": 8838.3935546875
+        },
+        {
+            "driver": "Tam\u00e1s Fogas",
+            "lap_time_str": "01:40.801",
+            "mse_norm": 0.167665034532547,
+            "mse_denorm": 8072.7041015625
+        },
+        {
+            "driver": "Razvan Logigan",
+            "lap_time_str": "01:40.806",
+            "mse_norm": 0.13941343128681183,
+            "mse_denorm": 8441.2431640625
+        },
+        {
+            "driver": "Kevin Lazar",
+            "lap_time_str": "01:40.822",
+            "mse_norm": 0.19331137835979462,
+            "mse_denorm": 8808.9501953125
+        },
+        {
+            "driver": "Andrea Miatto2",
+            "lap_time_str": "01:40.822",
+            "mse_norm": 0.19497933983802795,
+            "mse_denorm": 11931.28125
+        },
+        {
+            "driver": "Erik Buter",
+            "lap_time_str": "01:40.828",
+            "mse_norm": 0.19849559664726257,
+            "mse_denorm": 17099.59765625
+        },
+        {
+            "driver": "Pawel Swistara",
+            "lap_time_str": "01:40.831",
+            "mse_norm": 0.17193269729614258,
+            "mse_denorm": 12431.1552734375
+        },
+        {
+            "driver": "Jesper Blomberg",
+            "lap_time_str": "01:40.832",
+            "mse_norm": 0.14624741673469543,
+            "mse_denorm": 9423.76953125
+        },
+        {
+            "driver": "David Hertling",
+            "lap_time_str": "01:40.834",
+            "mse_norm": 0.17113518714904785,
+            "mse_denorm": 9239.3603515625
+        },
+        {
+            "driver": "Alex Salas Hernandez",
+            "lap_time_str": "01:40.836",
+            "mse_norm": 0.17291203141212463,
+            "mse_denorm": 7813.82421875
+        },
+        {
+            "driver": "Bartosz Kostowski",
+            "lap_time_str": "01:40.839",
+            "mse_norm": 0.15758229792118073,
+            "mse_denorm": 9550.7587890625
+        },
+        {
+            "driver": "Finley Mcquade2",
+            "lap_time_str": "01:40.847",
+            "mse_norm": 0.16212864220142365,
+            "mse_denorm": 11224.88671875
+        },
+        {
+            "driver": "Matt Mosby",
+            "lap_time_str": "01:40.877",
+            "mse_norm": 0.1757611334323883,
+            "mse_denorm": 14002.8720703125
+        },
+        {
+            "driver": "Philipp Wachter",
+            "lap_time_str": "01:40.885",
+            "mse_norm": 0.17618633806705475,
+            "mse_denorm": 11123.984375
+        },
+        {
+            "driver": "Wolfgang Weiss",
+            "lap_time_str": "01:40.885",
+            "mse_norm": 0.19735553860664368,
+            "mse_denorm": 9706.4033203125
+        },
+        {
+            "driver": "Alex Baconnais",
+            "lap_time_str": "01:40.893",
+            "mse_norm": 0.19266237318515778,
+            "mse_denorm": 17919.8984375
+        },
+        {
+            "driver": "William Valzelli",
+            "lap_time_str": "01:40.896",
+            "mse_norm": 0.19021989405155182,
+            "mse_denorm": 16981.623046875
+        },
+        {
+            "driver": "Gabriele Calvi Parisetti",
+            "lap_time_str": "01:40.900",
+            "mse_norm": 0.16111893951892853,
+            "mse_denorm": 9743.8798828125
+        },
+        {
+            "driver": "Francisco Sousa3",
+            "lap_time_str": "01:40.908",
+            "mse_norm": 0.16753464937210083,
+            "mse_denorm": 14243.3134765625
+        },
+        {
+            "driver": "Brandon Burns",
+            "lap_time_str": "01:40.913",
+            "mse_norm": 0.17186765372753143,
+            "mse_denorm": 11928.4091796875
+        },
+        {
+            "driver": "Christian Furze",
+            "lap_time_str": "01:40.921",
+            "mse_norm": 0.1611214131116867,
+            "mse_denorm": 10813.845703125
+        },
+        {
+            "driver": "Alin Florica",
+            "lap_time_str": "01:40.932",
+            "mse_norm": 0.15149912238121033,
+            "mse_denorm": 8779.560546875
+        },
+        {
+            "driver": "Federico Mariani",
+            "lap_time_str": "01:40.940",
+            "mse_norm": 0.16329196095466614,
+            "mse_denorm": 7863.658203125
+        },
+        {
+            "driver": "Alden Lisboa",
+            "lap_time_str": "01:40.940",
+            "mse_norm": 0.21416394412517548,
+            "mse_denorm": 18083.478515625
+        },
+        {
+            "driver": "Joe Manzoli",
+            "lap_time_str": "01:40.949",
+            "mse_norm": 0.17887349426746368,
+            "mse_denorm": 11138.0908203125
+        },
+        {
+            "driver": "Rodney Vitters",
+            "lap_time_str": "01:40.955",
+            "mse_norm": 0.1780066341161728,
+            "mse_denorm": 15212.333984375
+        },
+        {
+            "driver": "Urban Vidonja",
+            "lap_time_str": "01:40.964",
+            "mse_norm": 0.20135071873664856,
+            "mse_denorm": 16150.0068359375
+        },
+        {
+            "driver": "William Boisvert",
+            "lap_time_str": "01:40.994",
+            "mse_norm": 0.15907594561576843,
+            "mse_denorm": 15458.9052734375
+        },
+        {
+            "driver": "Faizal Mehrabi",
+            "lap_time_str": "01:41.013",
+            "mse_norm": 0.17453522980213165,
+            "mse_denorm": 8960.9169921875
+        },
+        {
+            "driver": "Lukas B\u00e4tjer",
+            "lap_time_str": "01:41.023",
+            "mse_norm": 0.16690553724765778,
+            "mse_denorm": 10970.19140625
+        },
+        {
+            "driver": "Pascal Ronchera",
+            "lap_time_str": "01:41.026",
+            "mse_norm": 0.17840155959129333,
+            "mse_denorm": 13136.875
+        },
+        {
+            "driver": "Jarrod Keen",
+            "lap_time_str": "01:41.029",
+            "mse_norm": 0.20460277795791626,
+            "mse_denorm": 20865.13671875
+        },
+        {
+            "driver": "Aleix Lucha2",
+            "lap_time_str": "01:41.040",
+            "mse_norm": 0.18758289515972137,
+            "mse_denorm": 10686.154296875
+        },
+        {
+            "driver": "Tom Potthast",
+            "lap_time_str": "01:41.053",
+            "mse_norm": 0.1371198445558548,
+            "mse_denorm": 8921.576171875
+        },
+        {
+            "driver": "Aniwat Lommahadthai",
+            "lap_time_str": "01:41.058",
+            "mse_norm": 0.156389057636261,
+            "mse_denorm": 7998.02783203125
+        },
+        {
+            "driver": "Joe Nathan",
+            "lap_time_str": "01:41.064",
+            "mse_norm": 0.17617301642894745,
+            "mse_denorm": 16527.27734375
+        },
+        {
+            "driver": "Zachary Evans7",
+            "lap_time_str": "01:41.066",
+            "mse_norm": 0.18354567885398865,
+            "mse_denorm": 11783.1982421875
+        },
+        {
+            "driver": "Michael Schwartz5",
+            "lap_time_str": "01:41.080",
+            "mse_norm": 0.1754801869392395,
+            "mse_denorm": 16936.873046875
+        },
+        {
+            "driver": "Thomas D Ambrosio",
+            "lap_time_str": "01:41.082",
+            "mse_norm": 0.17477603256702423,
+            "mse_denorm": 9653.36328125
+        },
+        {
+            "driver": "Jacopo Marzellan",
+            "lap_time_str": "01:41.086",
+            "mse_norm": 0.16510844230651855,
+            "mse_denorm": 14915.51953125
+        },
+        {
+            "driver": "Leon Bentvelzen",
+            "lap_time_str": "01:41.091",
+            "mse_norm": 0.16829624772071838,
+            "mse_denorm": 10395.7490234375
+        },
+        {
+            "driver": "Giuseppe Marando",
+            "lap_time_str": "01:41.102",
+            "mse_norm": 0.16930589079856873,
+            "mse_denorm": 9536.7177734375
+        },
+        {
+            "driver": "Javi Moreno Montejo",
+            "lap_time_str": "01:41.105",
+            "mse_norm": 0.15799912810325623,
+            "mse_denorm": 8332.4033203125
+        },
+        {
+            "driver": "Gabriele Castelli2",
+            "lap_time_str": "01:41.122",
+            "mse_norm": 0.18761710822582245,
+            "mse_denorm": 17695.904296875
+        },
+        {
+            "driver": "Rab Chalmers",
+            "lap_time_str": "01:41.133",
+            "mse_norm": 0.30436941981315613,
+            "mse_denorm": 39337.20703125
+        },
+        {
+            "driver": "Kevin Akkus",
+            "lap_time_str": "01:41.133",
+            "mse_norm": 0.12283322960138321,
+            "mse_denorm": 7925.62255859375
+        },
+        {
+            "driver": "Ian Fleming4",
+            "lap_time_str": "01:41.139",
+            "mse_norm": 0.16769282519817352,
+            "mse_denorm": 7000.97216796875
+        },
+        {
+            "driver": "Laken Shaw",
+            "lap_time_str": "01:41.140",
+            "mse_norm": 0.16642886400222778,
+            "mse_denorm": 8297.1484375
+        },
+        {
+            "driver": "Ricky Renner",
+            "lap_time_str": "01:41.142",
+            "mse_norm": 0.1838999092578888,
+            "mse_denorm": 8394.646484375
+        },
+        {
+            "driver": "Julian Sanders",
+            "lap_time_str": "01:41.157",
+            "mse_norm": 0.18490779399871826,
+            "mse_denorm": 11695.0517578125
+        },
+        {
+            "driver": "Erik Gebhard",
+            "lap_time_str": "01:41.161",
+            "mse_norm": 0.1875324547290802,
+            "mse_denorm": 10051.89453125
+        },
+        {
+            "driver": "Thorsten Seifert",
+            "lap_time_str": "01:41.161",
+            "mse_norm": 0.18321974575519562,
+            "mse_denorm": 15368.0859375
+        },
+        {
+            "driver": "Benn Snell",
+            "lap_time_str": "01:41.162",
+            "mse_norm": 0.16449277102947235,
+            "mse_denorm": 10693.435546875
+        },
+        {
+            "driver": "Alexander Wolters2",
+            "lap_time_str": "01:41.164",
+            "mse_norm": 0.18498529493808746,
+            "mse_denorm": 11547.103515625
+        },
+        {
+            "driver": "Ethan Wang",
+            "lap_time_str": "01:41.172",
+            "mse_norm": 0.18687622249126434,
+            "mse_denorm": 10028.7939453125
+        },
+        {
+            "driver": "Valentin Duval2",
+            "lap_time_str": "01:41.174",
+            "mse_norm": 0.2461259961128235,
+            "mse_denorm": 30621.685546875
+        },
+        {
+            "driver": "Jean-Michel Noyon",
+            "lap_time_str": "01:41.206",
+            "mse_norm": 0.13755083084106445,
+            "mse_denorm": 8285.6572265625
+        },
+        {
+            "driver": "Robert Samczyk",
+            "lap_time_str": "01:41.208",
+            "mse_norm": 0.17169098556041718,
+            "mse_denorm": 11730.17578125
+        },
+        {
+            "driver": "Vincent Crochard",
+            "lap_time_str": "01:41.224",
+            "mse_norm": 0.15901975333690643,
+            "mse_denorm": 11892.80078125
+        },
+        {
+            "driver": "Stefan Andersen",
+            "lap_time_str": "01:41.236",
+            "mse_norm": 0.15433840453624725,
+            "mse_denorm": 9816.2060546875
+        },
+        {
+            "driver": "Attila Sipos",
+            "lap_time_str": "01:41.240",
+            "mse_norm": 0.1977863758802414,
+            "mse_denorm": 13685.2548828125
+        },
+        {
+            "driver": "Pasquale Girolamodibari",
+            "lap_time_str": "01:41.242",
+            "mse_norm": 0.1853855699300766,
+            "mse_denorm": 11042.4267578125
+        },
+        {
+            "driver": "Edward Vartanessian",
+            "lap_time_str": "01:41.253",
+            "mse_norm": 0.19488367438316345,
+            "mse_denorm": 18641.08203125
+        },
+        {
+            "driver": "Miguel Leon",
+            "lap_time_str": "01:41.253",
+            "mse_norm": 0.1848028004169464,
+            "mse_denorm": 10196.2578125
+        },
+        {
+            "driver": "Edwin Gonzalez",
+            "lap_time_str": "01:41.258",
+            "mse_norm": 0.15103434026241302,
+            "mse_denorm": 7756.724609375
+        },
+        {
+            "driver": "Maxime Dumoulin",
+            "lap_time_str": "01:41.263",
+            "mse_norm": 0.16377978026866913,
+            "mse_denorm": 8938.4873046875
+        },
+        {
+            "driver": "Elis Ramirez",
+            "lap_time_str": "01:41.263",
+            "mse_norm": 0.17753593623638153,
+            "mse_denorm": 14347.904296875
+        },
+        {
+            "driver": "Steven B\u00fcki",
+            "lap_time_str": "01:41.269",
+            "mse_norm": 0.17252500355243683,
+            "mse_denorm": 9351.6875
+        },
+        {
+            "driver": "Cameron Iverson",
+            "lap_time_str": "01:41.270",
+            "mse_norm": 0.18516841530799866,
+            "mse_denorm": 10814.4404296875
+        },
+        {
+            "driver": "Yao Jianzhong",
+            "lap_time_str": "01:41.272",
+            "mse_norm": 0.18339665234088898,
+            "mse_denorm": 8023.80322265625
+        },
+        {
+            "driver": "Zixuan Liu",
+            "lap_time_str": "01:41.273",
+            "mse_norm": 0.166221484541893,
+            "mse_denorm": 8527.3388671875
+        },
+        {
+            "driver": "Boldizs\u00e1r Lantos",
+            "lap_time_str": "01:41.276",
+            "mse_norm": 0.2030739039182663,
+            "mse_denorm": 23244.787109375
+        },
+        {
+            "driver": "Otch Massari",
+            "lap_time_str": "01:41.277",
+            "mse_norm": 0.15266326069831848,
+            "mse_denorm": 8174.041015625
+        },
+        {
+            "driver": "Martin Bergth",
+            "lap_time_str": "01:41.279",
+            "mse_norm": 0.1848059743642807,
+            "mse_denorm": 21239.818359375
+        },
+        {
+            "driver": "Matthew Largi",
+            "lap_time_str": "01:41.284",
+            "mse_norm": 0.15809008479118347,
+            "mse_denorm": 11342.7724609375
+        },
+        {
+            "driver": "Samuel Mongare",
+            "lap_time_str": "01:41.285",
+            "mse_norm": 0.19001208245754242,
+            "mse_denorm": 8624.107421875
+        },
+        {
+            "driver": "Patryk Mroz",
+            "lap_time_str": "01:41.286",
+            "mse_norm": 0.2065981924533844,
+            "mse_denorm": 18262.05078125
+        },
+        {
+            "driver": "Ethan Turner2",
+            "lap_time_str": "01:41.286",
+            "mse_norm": 0.17206212878227234,
+            "mse_denorm": 12011.298828125
+        },
+        {
+            "driver": "Anthony Ramirez3",
+            "lap_time_str": "01:41.293",
+            "mse_norm": 0.16622045636177063,
+            "mse_denorm": 12028.201171875
+        },
+        {
+            "driver": "Bjarke Nue Seit Jespersen",
+            "lap_time_str": "01:41.295",
+            "mse_norm": 0.1702120155096054,
+            "mse_denorm": 9545.94140625
+        },
+        {
+            "driver": "Vitor Hugo Da Costa",
+            "lap_time_str": "01:41.296",
+            "mse_norm": 0.14100684225559235,
+            "mse_denorm": 9275.298828125
+        },
+        {
+            "driver": "Travis Aeichele",
+            "lap_time_str": "01:41.297",
+            "mse_norm": 0.19281218945980072,
+            "mse_denorm": 10738.1328125
+        },
+        {
+            "driver": "Tarou Iiduka",
+            "lap_time_str": "01:41.299",
+            "mse_norm": 0.1881461888551712,
+            "mse_denorm": 12462.4130859375
+        },
+        {
+            "driver": "Bogdan Stanila",
+            "lap_time_str": "01:41.302",
+            "mse_norm": 0.15017880499362946,
+            "mse_denorm": 9608.7138671875
+        },
+        {
+            "driver": "Petur Arnarsson",
+            "lap_time_str": "01:41.315",
+            "mse_norm": 0.22760836780071259,
+            "mse_denorm": 22749.775390625
+        },
+        {
+            "driver": "Dodi Ferdi",
+            "lap_time_str": "01:41.317",
+            "mse_norm": 0.19806718826293945,
+            "mse_denorm": 15180.484375
+        },
+        {
+            "driver": "Thomas Ulz",
+            "lap_time_str": "01:41.323",
+            "mse_norm": 0.15672221779823303,
+            "mse_denorm": 7492.78173828125
+        },
+        {
+            "driver": "Job Schrijver",
+            "lap_time_str": "01:41.323",
+            "mse_norm": 0.1603500247001648,
+            "mse_denorm": 8205.1796875
+        },
+        {
+            "driver": "Joseba G Ganzabal",
+            "lap_time_str": "01:41.324",
+            "mse_norm": 0.19852964580059052,
+            "mse_denorm": 14349.353515625
+        },
+        {
+            "driver": "Luke Stubbs",
+            "lap_time_str": "01:41.325",
+            "mse_norm": 0.20373263955116272,
+            "mse_denorm": 12920.4892578125
+        },
+        {
+            "driver": "Marco Albertini",
+            "lap_time_str": "01:41.332",
+            "mse_norm": 0.16084407269954681,
+            "mse_denorm": 8060.99755859375
+        },
+        {
+            "driver": "Bob Mendy",
+            "lap_time_str": "01:41.334",
+            "mse_norm": 0.1716119647026062,
+            "mse_denorm": 9770.7412109375
+        },
+        {
+            "driver": "Milan Wassenburg",
+            "lap_time_str": "01:41.338",
+            "mse_norm": 0.158720463514328,
+            "mse_denorm": 12279.6962890625
+        },
+        {
+            "driver": "Velmu Rantala",
+            "lap_time_str": "01:41.342",
+            "mse_norm": 0.16162024438381195,
+            "mse_denorm": 8072.03369140625
+        },
+        {
+            "driver": "Hristo Kerezov",
+            "lap_time_str": "01:41.343",
+            "mse_norm": 0.18782375752925873,
+            "mse_denorm": 10271.828125
+        },
+        {
+            "driver": "Gunther Lamberts",
+            "lap_time_str": "01:41.346",
+            "mse_norm": 0.19186069071292877,
+            "mse_denorm": 12235.6513671875
+        },
+        {
+            "driver": "Teddy Legendre",
+            "lap_time_str": "01:41.348",
+            "mse_norm": 0.1696336716413498,
+            "mse_denorm": 7691.1826171875
+        },
+        {
+            "driver": "Johannes Trepmann",
+            "lap_time_str": "01:41.348",
+            "mse_norm": 0.1933555155992508,
+            "mse_denorm": 17923.21875
+        },
+        {
+            "driver": "Noah Bressoud",
+            "lap_time_str": "01:41.354",
+            "mse_norm": 0.1576710343360901,
+            "mse_denorm": 13234.6328125
+        },
+        {
+            "driver": "Rodi Nunes",
+            "lap_time_str": "01:41.355",
+            "mse_norm": 0.17896325886249542,
+            "mse_denorm": 10227.7998046875
+        },
+        {
+            "driver": "Todd Brown6",
+            "lap_time_str": "01:41.357",
+            "mse_norm": 0.15868911147117615,
+            "mse_denorm": 8815.6064453125
+        },
+        {
+            "driver": "Nicolas Johnson",
+            "lap_time_str": "01:41.363",
+            "mse_norm": 0.15845347940921783,
+            "mse_denorm": 8195.5380859375
+        },
+        {
+            "driver": "Karim Fara",
+            "lap_time_str": "01:41.370",
+            "mse_norm": 0.1956557184457779,
+            "mse_denorm": 13416.05078125
+        },
+        {
+            "driver": "Reiko Klein",
+            "lap_time_str": "01:41.373",
+            "mse_norm": 0.16021113097667694,
+            "mse_denorm": 10491.8388671875
+        },
+        {
+            "driver": "Niclas Bundschuh",
+            "lap_time_str": "01:41.373",
+            "mse_norm": 0.17586959898471832,
+            "mse_denorm": 10808.69921875
+        },
+        {
+            "driver": "Kevin Haire",
+            "lap_time_str": "01:41.377",
+            "mse_norm": 0.18602269887924194,
+            "mse_denorm": 9220.0869140625
+        },
+        {
+            "driver": "Rick Berchem",
+            "lap_time_str": "01:41.379",
+            "mse_norm": 0.19006742537021637,
+            "mse_denorm": 11255.1279296875
+        },
+        {
+            "driver": "Eugen Jochim",
+            "lap_time_str": "01:41.386",
+            "mse_norm": 0.20719806849956512,
+            "mse_denorm": 16676.5859375
+        }
+    ],
+    "per_lap_amateur": [
+        {
+            "driver": "Jonathan Medina2",
+            "lap_time_str": "01:42.444",
+            "mse_norm": 0.17962394654750824,
+            "mse_denorm": 13998.2939453125
+        },
+        {
+            "driver": "Mikkel Stenerud",
+            "lap_time_str": "01:42.444",
+            "mse_norm": 0.21689561009407043,
+            "mse_denorm": 18061.58984375
+        },
+        {
+            "driver": "Carlos Lambardi",
+            "lap_time_str": "01:42.448",
+            "mse_norm": 0.17437855899333954,
+            "mse_denorm": 10054.5908203125
+        },
+        {
+            "driver": "Cory Kalina",
+            "lap_time_str": "01:42.451",
+            "mse_norm": 0.23458784818649292,
+            "mse_denorm": 23292.201171875
+        },
+        {
+            "driver": "Anique Hoogeveen",
+            "lap_time_str": "01:42.454",
+            "mse_norm": 0.21634641289710999,
+            "mse_denorm": 16264.4541015625
+        },
+        {
+            "driver": "V\u00e1clav Vedral",
+            "lap_time_str": "01:42.458",
+            "mse_norm": 0.17666220664978027,
+            "mse_denorm": 10073.2626953125
+        },
+        {
+            "driver": "David Nemcek",
+            "lap_time_str": "01:42.462",
+            "mse_norm": 0.2224993109703064,
+            "mse_denorm": 23218.55078125
+        },
+        {
+            "driver": "Branson Haldor",
+            "lap_time_str": "01:42.467",
+            "mse_norm": 0.19438225030899048,
+            "mse_denorm": 19489.392578125
+        },
+        {
+            "driver": "Miguel Flores5",
+            "lap_time_str": "01:42.468",
+            "mse_norm": 0.19169332087039948,
+            "mse_denorm": 11032.265625
+        },
+        {
+            "driver": "Christian Julian",
+            "lap_time_str": "01:42.470",
+            "mse_norm": 0.20764335989952087,
+            "mse_denorm": 13845.0244140625
+        },
+        {
+            "driver": "David Schwiegeraht",
+            "lap_time_str": "01:42.471",
+            "mse_norm": 0.1866922825574875,
+            "mse_denorm": 14565.89453125
+        },
+        {
+            "driver": "Keegan Calic",
+            "lap_time_str": "01:42.477",
+            "mse_norm": 0.1783524453639984,
+            "mse_denorm": 7535.83056640625
+        },
+        {
+            "driver": "Piotr Kuzminski",
+            "lap_time_str": "01:42.480",
+            "mse_norm": 0.19220085442066193,
+            "mse_denorm": 12338.0556640625
+        },
+        {
+            "driver": "Matthew Pursley",
+            "lap_time_str": "01:42.481",
+            "mse_norm": 0.234131321310997,
+            "mse_denorm": 25375.583984375
+        },
+        {
+            "driver": "Adrian Borowski",
+            "lap_time_str": "01:42.481",
+            "mse_norm": 0.19253134727478027,
+            "mse_denorm": 14982.9267578125
+        },
+        {
+            "driver": "Henry Chow",
+            "lap_time_str": "01:42.481",
+            "mse_norm": 0.17767062783241272,
+            "mse_denorm": 17549.443359375
+        },
+        {
+            "driver": "Daniel A Morales",
+            "lap_time_str": "01:42.483",
+            "mse_norm": 0.18889424204826355,
+            "mse_denorm": 12912.0009765625
+        },
+        {
+            "driver": "Daniel A Silva",
+            "lap_time_str": "01:42.483",
+            "mse_norm": 0.17647501826286316,
+            "mse_denorm": 8171.13623046875
+        },
+        {
+            "driver": "Peter Kubin",
+            "lap_time_str": "01:42.486",
+            "mse_norm": 0.2063627988100052,
+            "mse_denorm": 18922.615234375
+        },
+        {
+            "driver": "Colin Rassmann",
+            "lap_time_str": "01:42.488",
+            "mse_norm": 0.1985359936952591,
+            "mse_denorm": 17215.70703125
+        },
+        {
+            "driver": "Terrence Croce",
+            "lap_time_str": "01:42.489",
+            "mse_norm": 0.1708766669034958,
+            "mse_denorm": 8344.7060546875
+        },
+        {
+            "driver": "Massimo Lelio2",
+            "lap_time_str": "01:42.491",
+            "mse_norm": 0.21626296639442444,
+            "mse_denorm": 10462.8916015625
+        },
+        {
+            "driver": "Benjamin Hunter",
+            "lap_time_str": "01:42.492",
+            "mse_norm": 0.23137006163597107,
+            "mse_denorm": 14355.4892578125
+        },
+        {
+            "driver": "Kerri Williams",
+            "lap_time_str": "01:42.493",
+            "mse_norm": 0.1801496297121048,
+            "mse_denorm": 13761.9892578125
+        },
+        {
+            "driver": "Helgi Tomasson",
+            "lap_time_str": "01:42.496",
+            "mse_norm": 0.20468954741954803,
+            "mse_denorm": 16881.05859375
+        },
+        {
+            "driver": "Christian Savard",
+            "lap_time_str": "01:42.497",
+            "mse_norm": 0.15045754611492157,
+            "mse_denorm": 11494.4658203125
+        },
+        {
+            "driver": "Sky Aussin",
+            "lap_time_str": "01:42.498",
+            "mse_norm": 0.17320102453231812,
+            "mse_denorm": 19984.490234375
+        },
+        {
+            "driver": "Humberto Chaves",
+            "lap_time_str": "01:42.499",
+            "mse_norm": 0.22468486428260803,
+            "mse_denorm": 13526.1826171875
+        },
+        {
+            "driver": "Eder Goros",
+            "lap_time_str": "01:42.500",
+            "mse_norm": 0.18607451021671295,
+            "mse_denorm": 15198.05078125
+        },
+        {
+            "driver": "Bernd Beier",
+            "lap_time_str": "01:42.501",
+            "mse_norm": 0.18224173784255981,
+            "mse_denorm": 12850.849609375
+        },
+        {
+            "driver": "Fernando Signoretto",
+            "lap_time_str": "01:42.506",
+            "mse_norm": 0.1789388358592987,
+            "mse_denorm": 17454.361328125
+        },
+        {
+            "driver": "Griffin Carden",
+            "lap_time_str": "01:42.512",
+            "mse_norm": 0.23887522518634796,
+            "mse_denorm": 33160.93359375
+        },
+        {
+            "driver": "Joan Pescador",
+            "lap_time_str": "01:42.515",
+            "mse_norm": 0.19604358077049255,
+            "mse_denorm": 9682.6123046875
+        },
+        {
+            "driver": "Beni Sorek",
+            "lap_time_str": "01:42.519",
+            "mse_norm": 0.19094061851501465,
+            "mse_denorm": 22379.013671875
+        },
+        {
+            "driver": "Metin Temiz",
+            "lap_time_str": "01:42.526",
+            "mse_norm": 0.2160091996192932,
+            "mse_denorm": 21453.943359375
+        },
+        {
+            "driver": "Sounosuke Homma",
+            "lap_time_str": "01:42.528",
+            "mse_norm": 0.22224394977092743,
+            "mse_denorm": 26549.171875
+        },
+        {
+            "driver": "Jannik Putz2",
+            "lap_time_str": "01:42.528",
+            "mse_norm": 0.20795583724975586,
+            "mse_denorm": 13701.1171875
+        },
+        {
+            "driver": "Paul Riccobene",
+            "lap_time_str": "01:42.529",
+            "mse_norm": 0.16878241300582886,
+            "mse_denorm": 11950.7314453125
+        },
+        {
+            "driver": "Pedro Berberana2",
+            "lap_time_str": "01:42.530",
+            "mse_norm": 0.1643410176038742,
+            "mse_denorm": 12073.3251953125
+        },
+        {
+            "driver": "Michael Schilliger",
+            "lap_time_str": "01:42.532",
+            "mse_norm": 0.1839628964662552,
+            "mse_denorm": 15852.486328125
+        },
+        {
+            "driver": "Marco Sanchez6",
+            "lap_time_str": "01:42.533",
+            "mse_norm": 0.1972341388463974,
+            "mse_denorm": 16266.7939453125
+        },
+        {
+            "driver": "Victor Sung",
+            "lap_time_str": "01:42.534",
+            "mse_norm": 0.2084909975528717,
+            "mse_denorm": 20728.546875
+        },
+        {
+            "driver": "Michael Matischok",
+            "lap_time_str": "01:42.537",
+            "mse_norm": 0.18742044270038605,
+            "mse_denorm": 13094.28515625
+        },
+        {
+            "driver": "Matej Pavl\u00e1t",
+            "lap_time_str": "01:42.538",
+            "mse_norm": 0.19820089638233185,
+            "mse_denorm": 19096.1640625
+        },
+        {
+            "driver": "Aleksey Gromchenko",
+            "lap_time_str": "01:42.538",
+            "mse_norm": 0.17405663430690765,
+            "mse_denorm": 10175.57421875
+        },
+        {
+            "driver": "Javier Garc\u00eda5",
+            "lap_time_str": "01:42.543",
+            "mse_norm": 0.18985110521316528,
+            "mse_denorm": 14885.5869140625
+        },
+        {
+            "driver": "Britton Mears2",
+            "lap_time_str": "01:42.543",
+            "mse_norm": 0.16924357414245605,
+            "mse_denorm": 15329.5068359375
+        },
+        {
+            "driver": "Daniel T. Schmidt",
+            "lap_time_str": "01:42.544",
+            "mse_norm": 0.1688309609889984,
+            "mse_denorm": 15349.1953125
+        },
+        {
+            "driver": "Aaron Hollis",
+            "lap_time_str": "01:42.549",
+            "mse_norm": 0.2994740605354309,
+            "mse_denorm": 10710.3681640625
+        },
+        {
+            "driver": "Mario Di Meo",
+            "lap_time_str": "01:42.552",
+            "mse_norm": 0.2197173833847046,
+            "mse_denorm": 20314.482421875
+        },
+        {
+            "driver": "Richard Kelly7",
+            "lap_time_str": "01:42.552",
+            "mse_norm": 0.20372889935970306,
+            "mse_denorm": 20305.8203125
+        },
+        {
+            "driver": "Andrei Petrachenka",
+            "lap_time_str": "01:42.553",
+            "mse_norm": 0.17338109016418457,
+            "mse_denorm": 11818.1572265625
+        },
+        {
+            "driver": "Jos\u00e9 Tor\u00edz",
+            "lap_time_str": "01:42.553",
+            "mse_norm": 0.20966963469982147,
+            "mse_denorm": 14678.546875
+        },
+        {
+            "driver": "James Billingham2",
+            "lap_time_str": "01:42.554",
+            "mse_norm": 0.2238224297761917,
+            "mse_denorm": 17957.357421875
+        },
+        {
+            "driver": "Jhonatan Morrally",
+            "lap_time_str": "01:42.558",
+            "mse_norm": 0.18606151640415192,
+            "mse_denorm": 15622.91796875
+        },
+        {
+            "driver": "Kornel Grochala",
+            "lap_time_str": "01:42.558",
+            "mse_norm": 0.20277616381645203,
+            "mse_denorm": 14436.4189453125
+        },
+        {
+            "driver": "Ben Loxton",
+            "lap_time_str": "01:42.560",
+            "mse_norm": 0.23029960691928864,
+            "mse_denorm": 20119.125
+        },
+        {
+            "driver": "Juan Miquel Ciceron",
+            "lap_time_str": "01:42.565",
+            "mse_norm": 0.20289717614650726,
+            "mse_denorm": 23943.048828125
+        },
+        {
+            "driver": "Cody Meek",
+            "lap_time_str": "01:42.566",
+            "mse_norm": 0.1759239137172699,
+            "mse_denorm": 11887.689453125
+        },
+        {
+            "driver": "Jan Chalupeck\u00fd",
+            "lap_time_str": "01:42.566",
+            "mse_norm": 0.20443370938301086,
+            "mse_denorm": 17172.734375
+        },
+        {
+            "driver": "Oran King",
+            "lap_time_str": "01:42.567",
+            "mse_norm": 0.1966761350631714,
+            "mse_denorm": 14627.0419921875
+        },
+        {
+            "driver": "Roberto G\u00f3mez",
+            "lap_time_str": "01:42.573",
+            "mse_norm": 0.21865703165531158,
+            "mse_denorm": 16684.4609375
+        },
+        {
+            "driver": "Ludwig Vittinghof",
+            "lap_time_str": "01:42.575",
+            "mse_norm": 0.23267415165901184,
+            "mse_denorm": 26817.8359375
+        },
+        {
+            "driver": "Aldo Giani Godoy",
+            "lap_time_str": "01:42.575",
+            "mse_norm": 0.1570017784833908,
+            "mse_denorm": 15099.865234375
+        },
+        {
+            "driver": "Martin Pomp",
+            "lap_time_str": "01:42.576",
+            "mse_norm": 0.22367890179157257,
+            "mse_denorm": 15133.8076171875
+        },
+        {
+            "driver": "Matthew Cheverton",
+            "lap_time_str": "01:42.576",
+            "mse_norm": 0.15312206745147705,
+            "mse_denorm": 10300.8017578125
+        },
+        {
+            "driver": "Adam Prosser",
+            "lap_time_str": "01:42.580",
+            "mse_norm": 0.22603142261505127,
+            "mse_denorm": 19706.107421875
+        },
+        {
+            "driver": "Yahir Rodriguez",
+            "lap_time_str": "01:42.580",
+            "mse_norm": 0.24000029265880585,
+            "mse_denorm": 21920.296875
+        },
+        {
+            "driver": "Matthew Perron",
+            "lap_time_str": "01:42.580",
+            "mse_norm": 0.19119279086589813,
+            "mse_denorm": 10942.021484375
+        },
+        {
+            "driver": "Dolores Abernathy",
+            "lap_time_str": "01:42.582",
+            "mse_norm": 0.3329881727695465,
+            "mse_denorm": 26320.140625
+        },
+        {
+            "driver": "Juraj Geusic",
+            "lap_time_str": "01:42.585",
+            "mse_norm": 0.20841793715953827,
+            "mse_denorm": 13135.701171875
+        },
+        {
+            "driver": "Alex Stepanovskiy",
+            "lap_time_str": "01:42.587",
+            "mse_norm": 0.17264990508556366,
+            "mse_denorm": 14556.3935546875
+        },
+        {
+            "driver": "F\u00e1bio Jos\u00e9 B Ferreira",
+            "lap_time_str": "01:42.589",
+            "mse_norm": 0.19287139177322388,
+            "mse_denorm": 16775.685546875
+        },
+        {
+            "driver": "Chris Payne",
+            "lap_time_str": "01:42.590",
+            "mse_norm": 0.23650939762592316,
+            "mse_denorm": 21427.0390625
+        },
+        {
+            "driver": "Julian Leuchs",
+            "lap_time_str": "01:42.593",
+            "mse_norm": 0.21671582758426666,
+            "mse_denorm": 19555.5546875
+        },
+        {
+            "driver": "Christian X Cardona",
+            "lap_time_str": "01:42.597",
+            "mse_norm": 0.2469562441110611,
+            "mse_denorm": 18983.41796875
+        },
+        {
+            "driver": "Milton Zu\u00f1iga",
+            "lap_time_str": "01:42.597",
+            "mse_norm": 0.1843201220035553,
+            "mse_denorm": 17891.951171875
+        },
+        {
+            "driver": "Isabelle P Matthews",
+            "lap_time_str": "01:42.598",
+            "mse_norm": 0.1826184242963791,
+            "mse_denorm": 9878.1630859375
+        },
+        {
+            "driver": "R\u00e9my Vilain2",
+            "lap_time_str": "01:42.599",
+            "mse_norm": 0.17771495878696442,
+            "mse_denorm": 10943.5810546875
+        },
+        {
+            "driver": "Max Malyar",
+            "lap_time_str": "01:42.601",
+            "mse_norm": 0.19304823875427246,
+            "mse_denorm": 17416.923828125
+        },
+        {
+            "driver": "Matthew Banjo",
+            "lap_time_str": "01:42.601",
+            "mse_norm": 0.21451003849506378,
+            "mse_denorm": 19805.13671875
+        },
+        {
+            "driver": "Serafin Colon",
+            "lap_time_str": "01:42.605",
+            "mse_norm": 0.19504430890083313,
+            "mse_denorm": 19075.193359375
+        },
+        {
+            "driver": "Patrick Seiner",
+            "lap_time_str": "01:42.606",
+            "mse_norm": 0.17481613159179688,
+            "mse_denorm": 11865.9375
+        },
+        {
+            "driver": "Cale Sullivan",
+            "lap_time_str": "01:42.609",
+            "mse_norm": 0.24323998391628265,
+            "mse_denorm": 22912.923828125
+        },
+        {
+            "driver": "Jorge Laguna",
+            "lap_time_str": "01:42.611",
+            "mse_norm": 0.18568012118339539,
+            "mse_denorm": 18087.138671875
+        },
+        {
+            "driver": "Michael V. Petersen",
+            "lap_time_str": "01:42.611",
+            "mse_norm": 0.168638214468956,
+            "mse_denorm": 13058.634765625
+        },
+        {
+            "driver": "Vishaal Enkanna",
+            "lap_time_str": "01:42.611",
+            "mse_norm": 0.20957471430301666,
+            "mse_denorm": 12942.11328125
+        },
+        {
+            "driver": "Thomas Pacheco",
+            "lap_time_str": "01:42.612",
+            "mse_norm": 0.20198535919189453,
+            "mse_denorm": 13915.21875
+        },
+        {
+            "driver": "Jacob Smith73",
+            "lap_time_str": "01:42.612",
+            "mse_norm": 0.20552361011505127,
+            "mse_denorm": 14589.921875
+        },
+        {
+            "driver": "Jacopo Corvi",
+            "lap_time_str": "01:42.613",
+            "mse_norm": 0.1815643608570099,
+            "mse_denorm": 14780.5791015625
+        },
+        {
+            "driver": "Sven Valk",
+            "lap_time_str": "01:42.618",
+            "mse_norm": 0.23155322670936584,
+            "mse_denorm": 22629.13671875
+        },
+        {
+            "driver": "Mateo Cargnelutti",
+            "lap_time_str": "01:42.624",
+            "mse_norm": 0.25360679626464844,
+            "mse_denorm": 22321.658203125
+        },
+        {
+            "driver": "J Menger",
+            "lap_time_str": "01:42.624",
+            "mse_norm": 0.19810299575328827,
+            "mse_denorm": 14218.896484375
+        },
+        {
+            "driver": "Andrey Kobyzev",
+            "lap_time_str": "01:42.624",
+            "mse_norm": 0.1934199035167694,
+            "mse_denorm": 13081.05859375
+        },
+        {
+            "driver": "Mark Adam Jackson",
+            "lap_time_str": "01:42.628",
+            "mse_norm": 0.20299550890922546,
+            "mse_denorm": 20085.962890625
+        },
+        {
+            "driver": "Jay Smart",
+            "lap_time_str": "01:42.631",
+            "mse_norm": 0.20107904076576233,
+            "mse_denorm": 17197.30859375
+        },
+        {
+            "driver": "Weilin Cong",
+            "lap_time_str": "01:42.632",
+            "mse_norm": 0.20201462507247925,
+            "mse_denorm": 19403.849609375
+        },
+        {
+            "driver": "Jamie Dorey",
+            "lap_time_str": "01:42.635",
+            "mse_norm": 0.2125360071659088,
+            "mse_denorm": 11692.857421875
+        },
+        {
+            "driver": "Jose Andres Parra Torres",
+            "lap_time_str": "01:42.635",
+            "mse_norm": 0.20139773190021515,
+            "mse_denorm": 14105.935546875
+        },
+        {
+            "driver": "Max Buchholz",
+            "lap_time_str": "01:42.635",
+            "mse_norm": 0.17818965017795563,
+            "mse_denorm": 10474.4951171875
+        },
+        {
+            "driver": "Jesus Jimenez4",
+            "lap_time_str": "01:42.644",
+            "mse_norm": 0.20953017473220825,
+            "mse_denorm": 19038.01171875
+        },
+        {
+            "driver": "Cristobal Valenzuela",
+            "lap_time_str": "01:42.644",
+            "mse_norm": 0.15990620851516724,
+            "mse_denorm": 18928.748046875
+        },
+        {
+            "driver": "Hugo Paiva",
+            "lap_time_str": "01:42.649",
+            "mse_norm": 0.2310306429862976,
+            "mse_denorm": 22907.275390625
+        },
+        {
+            "driver": "Oscar Zegarra",
+            "lap_time_str": "01:42.656",
+            "mse_norm": 0.16556768119335175,
+            "mse_denorm": 18009.79296875
+        },
+        {
+            "driver": "Pavel Sirotkin",
+            "lap_time_str": "01:42.656",
+            "mse_norm": 0.2022092640399933,
+            "mse_denorm": 15361.6611328125
+        },
+        {
+            "driver": "Silvio Zucca",
+            "lap_time_str": "01:42.658",
+            "mse_norm": 0.23037707805633545,
+            "mse_denorm": 27381.923828125
+        },
+        {
+            "driver": "Alessio Franchi",
+            "lap_time_str": "01:42.658",
+            "mse_norm": 0.2114812284708023,
+            "mse_denorm": 12043.587890625
+        },
+        {
+            "driver": "Kim Meng Im",
+            "lap_time_str": "01:42.661",
+            "mse_norm": 0.17477978765964508,
+            "mse_denorm": 16688.68359375
+        },
+        {
+            "driver": "Ignacio Di Prizio",
+            "lap_time_str": "01:42.661",
+            "mse_norm": 0.20552903413772583,
+            "mse_denorm": 19384.33984375
+        },
+        {
+            "driver": "Kouji Itoh",
+            "lap_time_str": "01:42.664",
+            "mse_norm": 0.25347304344177246,
+            "mse_denorm": 25937.11328125
+        },
+        {
+            "driver": "Ivan Murugarren2",
+            "lap_time_str": "01:42.665",
+            "mse_norm": 0.19410742819309235,
+            "mse_denorm": 14421.9599609375
+        },
+        {
+            "driver": "Dario Canet",
+            "lap_time_str": "01:42.667",
+            "mse_norm": 0.20037628710269928,
+            "mse_denorm": 12842.080078125
+        },
+        {
+            "driver": "Luis Ramos6",
+            "lap_time_str": "01:42.667",
+            "mse_norm": 0.20258253812789917,
+            "mse_denorm": 19453.11328125
+        },
+        {
+            "driver": "Simone Olivieri2",
+            "lap_time_str": "01:42.670",
+            "mse_norm": 0.16484621167182922,
+            "mse_denorm": 8840.4638671875
+        },
+        {
+            "driver": "Guido Schuit",
+            "lap_time_str": "01:42.671",
+            "mse_norm": 0.17609667778015137,
+            "mse_denorm": 8836.9580078125
+        },
+        {
+            "driver": "Tommaso Baseggio",
+            "lap_time_str": "01:42.673",
+            "mse_norm": 0.1746797412633896,
+            "mse_denorm": 12087.19140625
+        },
+        {
+            "driver": "Yoan Hlebarov",
+            "lap_time_str": "01:42.673",
+            "mse_norm": 0.20934507250785828,
+            "mse_denorm": 14725.9521484375
+        },
+        {
+            "driver": "Adam Jichi",
+            "lap_time_str": "01:42.686",
+            "mse_norm": 0.19070939719676971,
+            "mse_denorm": 15862.7041015625
+        },
+        {
+            "driver": "Sean LV O Brien",
+            "lap_time_str": "01:42.694",
+            "mse_norm": 0.2420630306005478,
+            "mse_denorm": 13329.16796875
+        },
+        {
+            "driver": "Jack O Farrell",
+            "lap_time_str": "01:42.697",
+            "mse_norm": 0.1928883194923401,
+            "mse_denorm": 9803.275390625
+        },
+        {
+            "driver": "Christopher Dobell",
+            "lap_time_str": "01:42.699",
+            "mse_norm": 0.21304331719875336,
+            "mse_denorm": 17419.94140625
+        },
+        {
+            "driver": "Ozz Siddiq",
+            "lap_time_str": "01:42.699",
+            "mse_norm": 0.18466784060001373,
+            "mse_denorm": 18762.892578125
+        },
+        {
+            "driver": "Emilio Alvarez",
+            "lap_time_str": "01:42.700",
+            "mse_norm": 0.2273838073015213,
+            "mse_denorm": 19472.640625
+        },
+        {
+            "driver": "Owen Papavoine",
+            "lap_time_str": "01:42.702",
+            "mse_norm": 0.17318451404571533,
+            "mse_denorm": 14960.6494140625
+        },
+        {
+            "driver": "Thomas Bastin",
+            "lap_time_str": "01:42.710",
+            "mse_norm": 0.2771894335746765,
+            "mse_denorm": 28372.16015625
+        },
+        {
+            "driver": "Pak Yue Liu",
+            "lap_time_str": "01:42.718",
+            "mse_norm": 0.2122209221124649,
+            "mse_denorm": 12059.6689453125
+        },
+        {
+            "driver": "Xu Miao",
+            "lap_time_str": "01:42.718",
+            "mse_norm": 0.19243906438350677,
+            "mse_denorm": 20122.578125
+        },
+        {
+            "driver": "Davide Angeloni",
+            "lap_time_str": "01:42.722",
+            "mse_norm": 0.21586479246616364,
+            "mse_denorm": 17629.3671875
+        },
+        {
+            "driver": "Nathan Stringer3",
+            "lap_time_str": "01:42.722",
+            "mse_norm": 0.23707270622253418,
+            "mse_denorm": 20968.166015625
+        },
+        {
+            "driver": "Jannek Jeske",
+            "lap_time_str": "01:42.724",
+            "mse_norm": 0.1807403266429901,
+            "mse_denorm": 9901.1123046875
+        },
+        {
+            "driver": "Jim Clark",
+            "lap_time_str": "01:42.725",
+            "mse_norm": 0.18382160365581512,
+            "mse_denorm": 12939.39453125
+        },
+        {
+            "driver": "Lachlan Rollo",
+            "lap_time_str": "01:42.725",
+            "mse_norm": 0.2829402685165405,
+            "mse_denorm": 35271.421875
+        },
+        {
+            "driver": "Demo Drive",
+            "lap_time_str": "01:42.729",
+            "mse_norm": 0.24775604903697968,
+            "mse_denorm": 23885.439453125
+        },
+        {
+            "driver": "Jean Paul Vieira",
+            "lap_time_str": "01:42.730",
+            "mse_norm": 0.19569745659828186,
+            "mse_denorm": 14100.1826171875
+        },
+        {
+            "driver": "Max Gurr2",
+            "lap_time_str": "01:42.730",
+            "mse_norm": 0.18536821007728577,
+            "mse_denorm": 14378.939453125
+        },
+        {
+            "driver": "Mads Eneqvist",
+            "lap_time_str": "01:42.731",
+            "mse_norm": 0.24167568981647491,
+            "mse_denorm": 33943.3359375
+        },
+        {
+            "driver": "Andrew AM Martin",
+            "lap_time_str": "01:42.731",
+            "mse_norm": 0.16670675575733185,
+            "mse_denorm": 11501.185546875
+        },
+        {
+            "driver": "Nick Dela Rosa",
+            "lap_time_str": "01:42.734",
+            "mse_norm": 0.23805615305900574,
+            "mse_denorm": 27700.791015625
+        },
+        {
+            "driver": "Kevin Lemmens",
+            "lap_time_str": "01:42.737",
+            "mse_norm": 0.25122299790382385,
+            "mse_denorm": 21570.52734375
+        },
+        {
+            "driver": "Vishnu Tadimeti",
+            "lap_time_str": "01:42.738",
+            "mse_norm": 0.21700258553028107,
+            "mse_denorm": 20909.509765625
+        },
+        {
+            "driver": "Bruno H M Santos",
+            "lap_time_str": "01:42.740",
+            "mse_norm": 0.14692477881908417,
+            "mse_denorm": 11977.560546875
+        },
+        {
+            "driver": "Jackie Cheung",
+            "lap_time_str": "01:42.742",
+            "mse_norm": 0.18085509538650513,
+            "mse_denorm": 11365.8525390625
+        },
+        {
+            "driver": "Benjamin G. Rodriguez",
+            "lap_time_str": "01:42.742",
+            "mse_norm": 0.19586889445781708,
+            "mse_denorm": 16500.591796875
+        },
+        {
+            "driver": "Artur Halemba",
+            "lap_time_str": "01:42.743",
+            "mse_norm": 0.19909968972206116,
+            "mse_denorm": 9609.779296875
+        },
+        {
+            "driver": "Ondra David",
+            "lap_time_str": "01:42.744",
+            "mse_norm": 0.1936621516942978,
+            "mse_denorm": 18832.3515625
+        },
+        {
+            "driver": "Noah Rattenhuber",
+            "lap_time_str": "01:42.747",
+            "mse_norm": 0.17428340017795563,
+            "mse_denorm": 8954.822265625
+        },
+        {
+            "driver": "Tyler Brown22",
+            "lap_time_str": "01:42.747",
+            "mse_norm": 0.17617642879486084,
+            "mse_denorm": 14027.57421875
+        },
+        {
+            "driver": "Andres Malovos",
+            "lap_time_str": "01:42.750",
+            "mse_norm": 0.19146886467933655,
+            "mse_denorm": 16443.8125
+        },
+        {
+            "driver": "David Monterrosa",
+            "lap_time_str": "01:42.751",
+            "mse_norm": 0.2682109773159027,
+            "mse_denorm": 37649.17578125
+        },
+        {
+            "driver": "Dan Perez",
+            "lap_time_str": "01:42.751",
+            "mse_norm": 0.19817735254764557,
+            "mse_denorm": 17410.357421875
+        },
+        {
+            "driver": "Georges Sousa",
+            "lap_time_str": "01:42.752",
+            "mse_norm": 0.23523086309432983,
+            "mse_denorm": 33167.31640625
+        },
+        {
+            "driver": "Thomas M King",
+            "lap_time_str": "01:42.752",
+            "mse_norm": 0.214155375957489,
+            "mse_denorm": 16617.384765625
+        },
+        {
+            "driver": "John T\u00f6rnlind",
+            "lap_time_str": "01:42.753",
+            "mse_norm": 0.17226681113243103,
+            "mse_denorm": 11409.9404296875
+        },
+        {
+            "driver": "Thiago Guimar\u00e3es Santos",
+            "lap_time_str": "01:42.757",
+            "mse_norm": 0.17881345748901367,
+            "mse_denorm": 11017.3427734375
+        },
+        {
+            "driver": "Mark Cubbon",
+            "lap_time_str": "01:42.759",
+            "mse_norm": 0.16555383801460266,
+            "mse_denorm": 12004.8349609375
+        },
+        {
+            "driver": "Bruno Borges7",
+            "lap_time_str": "01:42.761",
+            "mse_norm": 0.19677352905273438,
+            "mse_denorm": 15125.7373046875
+        },
+        {
+            "driver": "Marcin Zawada",
+            "lap_time_str": "01:42.763",
+            "mse_norm": 0.2667485773563385,
+            "mse_denorm": 18152.5703125
+        },
+        {
+            "driver": "Adria Vidal",
+            "lap_time_str": "01:42.771",
+            "mse_norm": 0.1610189527273178,
+            "mse_denorm": 11500.5625
+        },
+        {
+            "driver": "Bruno Luna Ribeiro",
+            "lap_time_str": "01:42.771",
+            "mse_norm": 0.1452087163925171,
+            "mse_denorm": 8216.576171875
+        },
+        {
+            "driver": "Joonas P\u00e4nk\u00e4l\u00e4inen",
+            "lap_time_str": "01:42.772",
+            "mse_norm": 0.24557216465473175,
+            "mse_denorm": 23941.9296875
+        },
+        {
+            "driver": "Simon Egeberg Svarre",
+            "lap_time_str": "01:42.772",
+            "mse_norm": 0.23659299314022064,
+            "mse_denorm": 27001.01171875
+        },
+        {
+            "driver": "Theo Tardivat",
+            "lap_time_str": "01:42.777",
+            "mse_norm": 0.21269701421260834,
+            "mse_denorm": 14430.9375
+        },
+        {
+            "driver": "Tomas Dachuang",
+            "lap_time_str": "01:42.789",
+            "mse_norm": 0.2035369873046875,
+            "mse_denorm": 17568.60546875
+        },
+        {
+            "driver": "Derek Hull",
+            "lap_time_str": "01:42.791",
+            "mse_norm": 0.15539592504501343,
+            "mse_denorm": 9807.1279296875
+        },
+        {
+            "driver": "Christophe Senesael",
+            "lap_time_str": "01:42.791",
+            "mse_norm": 0.17723526060581207,
+            "mse_denorm": 14470.2060546875
+        },
+        {
+            "driver": "Federico Casassa",
+            "lap_time_str": "01:42.791",
+            "mse_norm": 0.1943913996219635,
+            "mse_denorm": 15777.4404296875
+        },
+        {
+            "driver": "Martin A Fernandez",
+            "lap_time_str": "01:42.795",
+            "mse_norm": 0.3077390491962433,
+            "mse_denorm": 51152.890625
+        },
+        {
+            "driver": "Eugeniy Korolev",
+            "lap_time_str": "01:42.796",
+            "mse_norm": 0.22756223380565643,
+            "mse_denorm": 21718.048828125
+        },
+        {
+            "driver": "Niall Stephens",
+            "lap_time_str": "01:42.798",
+            "mse_norm": 0.18325275182724,
+            "mse_denorm": 12743.4970703125
+        },
+        {
+            "driver": "Ludovico Piccolo",
+            "lap_time_str": "01:42.803",
+            "mse_norm": 0.18311579525470734,
+            "mse_denorm": 11487.369140625
+        },
+        {
+            "driver": "Rui Sun",
+            "lap_time_str": "01:42.806",
+            "mse_norm": 0.19239811599254608,
+            "mse_denorm": 16010.4892578125
+        },
+        {
+            "driver": "Michael Matthews7",
+            "lap_time_str": "01:42.813",
+            "mse_norm": 0.17582471668720245,
+            "mse_denorm": 10180.6240234375
+        },
+        {
+            "driver": "Kali Whoopy",
+            "lap_time_str": "01:42.816",
+            "mse_norm": 0.19490759074687958,
+            "mse_denorm": 14087.2958984375
+        },
+        {
+            "driver": "Eduardo Abreu3",
+            "lap_time_str": "01:42.820",
+            "mse_norm": 0.2137666493654251,
+            "mse_denorm": 23219.33203125
+        },
+        {
+            "driver": "Fernando Araiza",
+            "lap_time_str": "01:42.820",
+            "mse_norm": 0.22639286518096924,
+            "mse_denorm": 24034.328125
+        },
+        {
+            "driver": "Marcos Franco",
+            "lap_time_str": "01:42.821",
+            "mse_norm": 0.2164127379655838,
+            "mse_denorm": 18091.978515625
+        },
+        {
+            "driver": "Arteom Tambur",
+            "lap_time_str": "01:42.837",
+            "mse_norm": 0.25173690915107727,
+            "mse_denorm": 26261.171875
+        },
+        {
+            "driver": "Michael Saleme",
+            "lap_time_str": "01:42.839",
+            "mse_norm": 0.1927729994058609,
+            "mse_denorm": 14681.28515625
+        }
+    ],
+    "classification_metrics": {
+        "auc": 0.7790513535932433,
+        "best_threshold": 0.19070939719676971,
+        "precision": 0.8041958041958042,
+        "recall": 0.6460674157303371,
+        "f1_score": 0.7165109034267912,
+        "confusion_matrix": [
+            [
+                121,
+                28
+            ],
+            [
+                63,
+                115
+            ]
+        ]
+    }
+}

@@ -79,7 +79,7 @@ class FeedbackReport:
 
 #* --------------------------- LLM-POWERED NATURAL LANGUAGE COACHING ------------------------- #
 
-#! LLM provider configurations
+#! LLM provider configurations - GROQ DEFAULT
 LLM_PROVIDERS = {
     "gemini": {
         "env_key": "GEMINI_API_KEY",
@@ -174,7 +174,6 @@ def _create_llm_client(provider, api_key=None):
       - Groq via groq SDK (OpenAI-compatible)
       - OpenAI via openai SDK
     
-    Returns: (client, model_name) or (None, None) if unavailable.
     """
     config = LLM_PROVIDERS.get(provider, LLM_PROVIDERS[DEFAULT_PROVIDER])
     key = api_key or os.environ.get(config["env_key"])
@@ -199,7 +198,7 @@ def _create_llm_client(provider, api_key=None):
         except (ImportError, Exception):
             return None, None
 
-    return None, None
+    return None, None # (client, model_name) or (None, None) if unavailable
 
 
 def _llm_generate(client, provider, model, prompt, max_tokens=300):
@@ -293,12 +292,11 @@ def generate_feedback(amateur_raw, expert_recon_raw, expert_baseline_sq_error,
     Args:
         amateur_raw:       (N_POINTS, N_FEATURES) — raw amateur telemetry (denormalised)
         expert_recon_raw:  (N_POINTS, N_FEATURES) — autoencoder reconstruction (denormalised)
-        expert_baseline_sq_error: (N_POINTS, N_FEATURES) — mean expert squared error 
-                                   (used as baseline for severity)
+        expert_baseline_sq_error: (N_POINTS, N_FEATURES) — mean expert squared error (used as baseline for severity)
         lap_time_s:        lap time in seconds (for time loss estimation)
         top_k:             max coaching zones to return
         llm_provider:      "gemini" , "groq"
-        llm_api_key:       API key (or set env var: GEMINI_API_KEY / GROQ_API_KEY)
+        llm_api_key:       API key 
         llm_model:         override default model name
         
     Returns:

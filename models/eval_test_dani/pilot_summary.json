@@ -1,0 +1,32 @@
+{
+  "driver": "Dani Gracia",
+  "n_laps": 3,
+  "expert_baseline": {
+    "mse_mean": 0.104771,
+    "mse_std": 0.020664,
+    "n_laps": 149
+  },
+  "laps": [
+    {
+      "lap": 1,
+      "lap_time": "01:42.797",
+      "mse": 0.136014,
+      "severity": 1.0,
+      "time_loss_s": 0.549
+    },
+    {
+      "lap": 2,
+      "lap_time": "01:43.402",
+      "mse": 0.177221,
+      "severity": 1.0,
+      "time_loss_s": 1.027
+    },
+    {
+      "lap": 3,
+      "lap_time": "01:44.845",
+      "mse": 0.191063,
+      "severity": 1.0,
+      "time_loss_s": 1.305
+    }
+  ]
+}

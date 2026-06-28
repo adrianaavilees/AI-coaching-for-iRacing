@@ -1,0 +1,38 @@
+{
+  "driver": "Dani Gracia",
+  "n_laps": 3,
+  "laps": [
+    {
+      "lap_number": 1,
+      "lap_time": "01:42.797",
+      "lap_time_s": 102.797,
+      "mse_normalised": 0.200342,
+      "n_coaching_zones": 5,
+      "overall_severity": 1.0,
+      "estimated_time_loss_s": 0.771
+    },
+    {
+      "lap_number": 2,
+      "lap_time": "01:43.402",
+      "lap_time_s": 103.402,
+      "mse_normalised": 0.255946,
+      "n_coaching_zones": 5,
+      "overall_severity": 1.0,
+      "estimated_time_loss_s": 1.236
+    },
+    {
+      "lap_number": 3,
+      "lap_time": "01:44.845",
+      "lap_time_s": 104.845,
+      "mse_normalised": 0.271089,
+      "n_coaching_zones": 5,
+      "overall_severity": 1.0,
+      "estimated_time_loss_s": 1.557
+    }
+  ],
+  "expert_baseline": {
+    "mse_mean": 0.176185,
+    "mse_std": 0.021748,
+    "n_laps": 149
+  }
+}
